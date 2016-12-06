@@ -8,4 +8,30 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MovieCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_margin">1dp</item>
+    </style>
+
+
+    <style name="PosterStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">185dp</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="MovieTitleStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">bottom</item>
+        <item name="android:background">@color/background_movie_name</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
 </resources>

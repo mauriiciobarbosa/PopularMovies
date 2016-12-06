@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/MovieCard">
+
+    <ImageView
+        android:id="@+id/ivPoster"
+        style="@style/PosterStyle"
+        tools:src="@drawable/example" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/MovieTitleStyle"
+        tools:text="Animais incriveis e onde eles habitam" />
+
+</LinearLayout>
