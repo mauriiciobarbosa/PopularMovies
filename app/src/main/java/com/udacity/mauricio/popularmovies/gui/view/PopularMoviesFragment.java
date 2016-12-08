@@ -1,8 +1,10 @@
 package com.udacity.mauricio.popularmovies.gui.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +16,13 @@ import android.widget.TextView;
 
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.gui.adapter.MovieAdapter;
+import com.udacity.mauricio.popularmovies.models.MovieDTO;
 import com.udacity.mauricio.popularmovies.models.PageDTO;
 import com.udacity.mauricio.popularmovies.tasks.LoadMovieTask;
 import com.udacity.mauricio.popularmovies.utils.AppUtils;
 
 
-public class PopularMoviesFragment extends Fragment implements LoadMovieTask.LoadMovieListener {
+public class PopularMoviesFragment extends Fragment implements LoadMovieTask.LoadMovieListener, View.OnClickListener {
 
     protected RecyclerView rvMovies;
     protected ProgressBar progressBar;
@@ -46,7 +49,7 @@ public class PopularMoviesFragment extends Fragment implements LoadMovieTask.Loa
         progressBar = (ProgressBar) viewRoot.findViewById(R.id.progressBar);
         tvMessage = (TextView) viewRoot.findViewById(R.id.tvMessage);
 
-        adapter = new MovieAdapter(getContext());
+        adapter = new MovieAdapter(getContext(), this);
         //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
 
         rvMovies.setAdapter(adapter);
@@ -99,5 +102,14 @@ public class PopularMoviesFragment extends Fragment implements LoadMovieTask.Loa
         rvMovies.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
         tvMessage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int position = rvMovies.getChildLayoutPosition(view);
+        MovieDTO movie = adapter.getMovies().get(position);
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        intent.putExtra(DetailActivity.EXTRA_MOVIE, movie);
+        startActivity(intent);
     }
 }

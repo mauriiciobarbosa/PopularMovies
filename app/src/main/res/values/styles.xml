@@ -44,4 +44,20 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <style name="MovieDetailTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:textSize">@dimen/article_titles</item>
+        <item name="android:layout_marginBottom">@dimen/md_keylines</item>
+    </style>
+
+    <style name="MovieDetailDescription">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/md_keylines</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
 </resources>

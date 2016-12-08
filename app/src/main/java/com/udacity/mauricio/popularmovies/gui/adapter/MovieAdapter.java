@@ -22,15 +22,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private List<MovieDTO> movies;
     private Context context;
+    private View.OnClickListener listener;
 
-    public MovieAdapter(Context context) {
+    public MovieAdapter(Context context, View.OnClickListener listener) {
         this.context = context;
+        this.listener = listener;
     }
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View viewRoot = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movie, parent, false);
-        return new MovieViewHolder(viewRoot);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movie, parent, false);
+        view.setOnClickListener(listener);
+        return new MovieViewHolder(view);
     }
 
     @Override
@@ -68,4 +71,5 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             overview = (TextView) itemView.findViewById(R.id.tvDescription);
         }
     }
+
 }

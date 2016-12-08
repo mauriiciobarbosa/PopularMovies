@@ -19,13 +19,13 @@
             android:id="@+id/tvTitle"
             style="@style/MovieTitleStyle"
             android:layout_alignBottom="@+id/ivPoster"
-            tools:text="Animais incriveis e onde eles habitam" />
+            tools:text="@string/ex_movie_title" />
 
         <TextView
             android:id="@+id/tvDescription"
             style="@style/MovieSipnoseStyle"
             android:layout_below="@+id/tvTitle"
-            tools:text="When you have a spare moment, we'd really appreciate if you could fill out some feedback on your codelab experience. We'll use this information to iterate and improve the codelab over time." />
+            tools:text="@string/ex_movie_overview" />
 
     </RelativeLayout>
 
