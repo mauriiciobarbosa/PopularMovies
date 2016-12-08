@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".gui.view.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="6dp"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Title"
+        app:titleTextColor="@android:color/white"/>
 
     <fragment
         android:id="@+id/frag_popular_movies"
@@ -13,4 +26,4 @@
         android:layout_height="match_parent"
         android:name="com.udacity.mauricio.popularmovies.gui.view.PopularMoviesFragment" />
 
-</FrameLayout>
+</LinearLayout>

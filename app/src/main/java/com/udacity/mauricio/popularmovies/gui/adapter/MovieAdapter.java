@@ -39,6 +39,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         String thumb = context.getString(R.string.baseUrl_image) + movie.posterPath;
         Picasso.with(context).load(thumb).into(holder.poster);
         holder.title.setText(movie.originalTitle);
+        holder.overview.setText(movie.overview);
     }
 
     @Override
@@ -58,11 +59,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
         ImageView poster;
         TextView title;
+        TextView overview;
 
         MovieViewHolder(View itemView) {
             super(itemView);
             poster = (ImageView) itemView.findViewById(R.id.ivPoster);
             title = (TextView) itemView.findViewById(R.id.tvTitle);
+            overview = (TextView) itemView.findViewById(R.id.tvDescription);
         }
     }
 }

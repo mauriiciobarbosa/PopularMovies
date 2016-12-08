@@ -1,5 +1,6 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,6 +24,10 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvMovies"
         android:layout_height="match_parent"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent"
+        android:paddingTop="@dimen/md_keylines"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"/>
 
 </FrameLayout>

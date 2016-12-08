@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
     style="@style/MovieCard">
 
-    <ImageView
-        android:id="@+id/ivPoster"
-        style="@style/PosterStyle"
-        tools:src="@drawable/example" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        style="@style/MovieTitleStyle"
-        tools:text="Animais incriveis e onde eles habitam" />
+        <ImageView
+            android:id="@+id/ivPoster"
+            style="@style/PosterStyle"
+            tools:src="@drawable/example" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/MovieTitleStyle"
+            android:layout_alignBottom="@+id/ivPoster"
+            tools:text="Animais incriveis e onde eles habitam" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            style="@style/MovieSipnoseStyle"
+            android:layout_below="@+id/tvTitle"
+            tools:text="When you have a spare moment, we'd really appreciate if you could fill out some feedback on your codelab experience. We'll use this information to iterate and improve the codelab over time." />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

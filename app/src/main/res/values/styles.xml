@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -10,27 +10,37 @@
 
     <style name="MovieCard">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:layout_margin">1dp</item>
+        <item name="android:layout_height">@dimen/card_height</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginBottom">@dimen/md_keylines</item>
+        <item name="android:layout_marginLeft">@dimen/md_keylines</item>
+        <item name="android:layout_marginRight">@dimen/md_keylines</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
-
 
     <style name="PosterStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">185dp</item>
+        <item name="android:layout_height">200dp</item>
         <item name="android:scaleType">fitXY</item>
     </style>
 
     <style name="MovieTitleStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">@dimen/card_title_height</item>
+        <item name="android:layout_marginLeft">@dimen/md_keylines</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_gravity">bottom</item>
-        <item name="android:background">@color/background_movie_name</item>
         <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="MovieSipnoseStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/md_keylines</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/dark_grey</item>
+        <item name="android:maxLines">3</item>
         <item name="android:ellipsize">end</item>
     </style>
 
