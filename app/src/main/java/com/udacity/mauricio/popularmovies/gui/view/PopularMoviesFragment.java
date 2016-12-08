@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,8 @@ public class PopularMoviesFragment extends Fragment implements LoadMovieTask.Loa
         rvMovies = (RecyclerView) viewRoot.findViewById(R.id.rvMovies);
         progressBar = (ProgressBar) viewRoot.findViewById(R.id.progressBar);
         tvMessage = (TextView) viewRoot.findViewById(R.id.tvMessage);
+        Toolbar toolbar = (Toolbar) viewRoot.findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
 
         adapter = new MovieAdapter(getContext(), this);
         //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
