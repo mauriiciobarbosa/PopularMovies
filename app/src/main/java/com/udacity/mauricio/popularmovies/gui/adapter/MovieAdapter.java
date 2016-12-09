@@ -1,6 +1,7 @@
 package com.udacity.mauricio.popularmovies.gui.adapter;
 
 import android.content.Context;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +13,12 @@ import com.squareup.picasso.Picasso;
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by mauricio-MTM on 12/6/2016.
  */
-
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private List<MovieDTO> movies;
@@ -33,7 +34,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movie, parent, false);
         view.setOnClickListener(listener);
-        return new MovieViewHolder(view);
+        return new MovieViewHolder(context, view);
     }
 
     @Override
@@ -54,8 +55,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return movies;
     }
 
-    public void setMovies(List<MovieDTO> movies) {
-        this.movies = movies;
+    public void setMovies(List<MovieDTO> newMovies) {
+        if (movies == null)
+            movies = new ArrayList<>(newMovies.size());
+        int start = movies.size() - 1;
+        movies.addAll(newMovies);
+        notifyItemRangeInserted(start, newMovies.size());
     }
 
     static class MovieViewHolder extends RecyclerView.ViewHolder {
@@ -64,11 +69,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         TextView title;
         TextView overview;
 
-        MovieViewHolder(View itemView) {
+        MovieViewHolder(Context context, View itemView) {
             super(itemView);
             poster = (ImageView) itemView.findViewById(R.id.ivPoster);
             title = (TextView) itemView.findViewById(R.id.tvTitle);
             overview = (TextView) itemView.findViewById(R.id.tvDescription);
+            ViewCompat.setTransitionName(poster, context.getString(R.string.movie_poster_trasition_name));
+            ViewCompat.setTransitionName(overview, context.getString(R.string.movie_overview_trasition_name));
         }
     }
 

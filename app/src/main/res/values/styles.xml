@@ -8,6 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="BaseTheme" parent="AppTheme">
+
+    </style>
+
     <style name="MovieCard">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/card_height</item>

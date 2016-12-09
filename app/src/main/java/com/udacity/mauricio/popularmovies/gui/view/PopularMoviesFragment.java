@@ -1,11 +1,14 @@
 package com.udacity.mauricio.popularmovies.gui.view;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +24,7 @@ import com.udacity.mauricio.popularmovies.models.MovieDTO;
 import com.udacity.mauricio.popularmovies.models.PageDTO;
 import com.udacity.mauricio.popularmovies.tasks.LoadMovieTask;
 import com.udacity.mauricio.popularmovies.utils.AppUtils;
+import com.udacity.mauricio.popularmovies.utils.EndlessRecyclerViewScrollListener;
 
 
 public class PopularMoviesFragment extends Fragment implements LoadMovieTask.LoadMovieListener, View.OnClickListener {
@@ -29,10 +33,15 @@ public class PopularMoviesFragment extends Fragment implements LoadMovieTask.Loa
     protected ProgressBar progressBar;
     protected TextView tvMessage;
 
+    // Store a member variable for the listener
+    protected EndlessRecyclerViewScrollListener scrollListener;
+
     protected MovieAdapter adapter;
 
     protected LoadMovieTask task;
     protected boolean isSync;
+
+    private int currentPage;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,12 +62,26 @@ public class PopularMoviesFragment extends Fragment implements LoadMovieTask.Loa
         toolbar.setTitle(R.string.app_name);
 
         adapter = new MovieAdapter(getContext(), this);
-        //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
 
         rvMovies.setAdapter(adapter);
-        rvMovies.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        rvMovies.setLayoutManager(linearLayoutManager);
 
-        task = new LoadMovieTask(getContext(), this);
+        final Context context = getContext();
+
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                task = new LoadMovieTask(context, PopularMoviesFragment.this);
+                task.execute(String.valueOf(page + 1));
+            }
+        };
+
+        // Adds the scroll listener to RecyclerView
+        rvMovies.addOnScrollListener(scrollListener);
 
         return viewRoot;
     }
@@ -74,9 +97,20 @@ public class PopularMoviesFragment extends Fragment implements LoadMovieTask.Loa
         }
 
         if (!isSync) {
-            task.execute();
-            isSync = true;
+            loadFirstMoviesPage();
         }
+    }
+
+    private void loadFirstMoviesPage() {
+        // 1. First, clear the array of data
+        //listOfItems.clear();
+        // 2. Notify the adapter of the update
+        //adapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
+        // 3. Reset endless scroll listener when performing a new search
+       // scrollListener.resetState();
+        task = new LoadMovieTask(getContext(), this);
+        task.execute("1");
+        isSync = true;
     }
 
     private void showMessage() {
@@ -87,32 +121,51 @@ public class PopularMoviesFragment extends Fragment implements LoadMovieTask.Loa
 
     @Override
     public void onPreExecute() {
-        rvMovies.setVisibility(View.GONE);
-        tvMessage.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
+        boolean isFirstLoad = (currentPage == 0);
+        if (isFirstLoad) {
+            rvMovies.setVisibility(View.GONE);
+            tvMessage.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onLoadMovie(PageDTO page) {
 
-        if (page == null || page.movies == null || page.movies.isEmpty()) {
+        boolean hasNoMoreMovies = page == null || page.movies == null || page.movies.isEmpty();
+
+        if (hasNoMoreMovies && currentPage == 0) {
             showMessage();
             return;
         }
 
         adapter.setMovies(page.movies);
-        adapter.notifyDataSetChanged();
-        rvMovies.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.GONE);
-        tvMessage.setVisibility(View.GONE);
+
+        boolean isFirstLoad = (currentPage == 0);
+
+        currentPage = page.page;
+
+        if (isFirstLoad) {
+            rvMovies.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+            tvMessage.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onClick(View view) {
         int position = rvMovies.getChildLayoutPosition(view);
         MovieDTO movie = adapter.getMovies().get(position);
-        Intent intent = new Intent(getContext(), DetailActivity.class);
+
+        Activity activity = getActivity();
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+                Pair.create(view.findViewById(R.id.ivPoster), getString(R.string.movie_poster_trasition_name)),
+                Pair.create(view.findViewById(R.id.tvDescription), getString(R.string.movie_overview_trasition_name)));
+
+        Intent intent = new Intent(activity, DetailActivity.class);
         intent.putExtra(DetailActivity.EXTRA_MOVIE, movie);
-        startActivity(intent);
+
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 }

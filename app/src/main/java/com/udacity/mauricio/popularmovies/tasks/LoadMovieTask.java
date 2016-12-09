@@ -24,6 +24,7 @@ public class LoadMovieTask extends AsyncTask<String, Void, PageDTO> {
 
     private static final String LOG_TAG = LoadMovieTask.class.getSimpleName();
     private static final String KEY_PARAM = "api_key";
+    private static final String PAGE_PARAM = "page";
 
     private LoadMovieListener listener;
     private Context context;
@@ -45,7 +46,10 @@ public class LoadMovieTask extends AsyncTask<String, Void, PageDTO> {
         BufferedReader reader = null;
         PageDTO result = null;
 
+        String page = params[0];
+
         Uri builtUri = Uri.parse(context.getString(R.string.baseUrl)).buildUpon()
+                .appendQueryParameter(PAGE_PARAM, page)
                 .appendQueryParameter(KEY_PARAM, context.getString(R.string.api_key))
                 .build();
 
