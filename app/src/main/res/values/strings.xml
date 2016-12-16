@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Popular Movies</string>
+    <string name="app_name" translatable="false">RepoMovies</string>
     <string name="msg_error_on_load_images">Unable to load images</string>
 
     <string name="api_key" translatable="false">781f5b39ef7222ceb862dcde957ec3f4</string>
@@ -22,6 +22,7 @@
     <string name="title_language_us">English</string>
     <string name="title_sort">Sort</string>
     <string name="title_language">Language</string>
+    <string name="title_preferences">Preferences</string>
 
     <string name="movie_poster_trasition_name" translatable="false">movie_poster</string>
     <string name="movie_name_trasition_name" translatable="false">movie_name</string>

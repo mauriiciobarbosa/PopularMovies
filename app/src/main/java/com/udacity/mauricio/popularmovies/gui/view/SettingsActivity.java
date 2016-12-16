@@ -15,6 +15,7 @@ public class SettingsActivity extends BaseActivity {
         setContentView(R.layout.actv_settings);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(getString(R.string.title_preferences));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
