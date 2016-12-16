@@ -2,7 +2,7 @@
 
 ## Synopsis
 
-RepoMovies project is an android app to allow users to discover the most popular movies playing. This project is part of Android Developer Nanodegree course. The app retrieves and shows movies information from The Movie Database - TMDB (https:www.themoviedb.org). The app is localized both in Brazilian Portuguese and English.
+RepoMovies project is an android app to allow users to discover the most popular movies playing. This project is part of Android Developer Nanodegree course. The app retrieves and shows movies information from The Movie Database - TMDB (https://www.themoviedb.org). The app is localized both in Brazilian Portuguese and English.
 
 ## Installation
 
