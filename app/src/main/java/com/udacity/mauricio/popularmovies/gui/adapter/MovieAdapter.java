@@ -42,7 +42,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         MovieDTO movie = movies.get(position);
         String thumb = context.getString(R.string.baseUrl_image) + movie.posterPath;
         Picasso.with(context).load(thumb).into(holder.poster);
-        holder.title.setText(movie.originalTitle);
+        holder.title.setText(movie.title);
         holder.overview.setText(movie.overview);
     }
 
@@ -61,6 +61,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         int start = movies.size() - 1;
         movies.addAll(newMovies);
         notifyItemRangeInserted(start, newMovies.size());
+    }
+
+    public void clear() {
+        if (movies != null)
+            movies.clear();
+        notifyDataSetChanged();
     }
 
     static class MovieViewHolder extends RecyclerView.ViewHolder {

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sort_by_popular_value" translatable="false">popularity.desc</string>
+    <string name="sort_by_rated_value" translatable="false">vote_average.desc</string>
+
+    <string name="pref_sort_key" translatable="false">pref_sort_key</string>
+    <string name="pref_sort_title" >@string/title_sort</string>
+    <string name="pref_sort_default_value" >@string/sort_by_popular_value</string>
+
+    <string-array name="sort_by_list">
+        <item>@string/title_sort_by_popular</item>
+        <item>@string/title_sort_by_rated</item>
+    </string-array>
+
+    <string-array name="sort_by_list_values">
+        <item>@string/sort_by_popular_value</item>
+        <item>@string/sort_by_rated_value</item>
+    </string-array>
+
+    <string name="language_pt_value" translatable="false">pt-BR</string>
+    <string name="language_us_value" translatable="false">en-US</string>
+
+    <string name="pref_language_key" translatable="false">pref_language_key</string>
+    <string name="pref_language_title" >@string/title_language</string>
+    <string name="pref_language_default_value" >@string/language_us_value</string>
+
+    <string-array name="language_list">
+        <item>@string/title_language_pt</item>
+        <item>@string/title_language_us</item>
+    </string-array>
+
+    <string-array name="language_list_values">
+        <item>@string/language_pt_value</item>
+        <item>@string/language_us_value</item>
+    </string-array>
+</resources>

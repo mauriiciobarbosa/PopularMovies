@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_error_on_load_images">Não foi possível carregar imagens</string>
+
+    <string name="label_original_title">Título Original</string>
+    <string name="label_overview">Sipnose</string>
+    <string name="label_rate">Classificação</string>
+    <string name="label_popularity">Audiência</string>
+    <string name="label_gender">Gênero</string>
+    <string name="label_movie_length">Duração</string>
+    <string name="label_release_date">Data de Lançamento</string>
+    <string name="action_refresh">Atualizar</string>
+    <string name="action_settings">Configurações</string>
+
+    <string name="title_sort_by_popular">Mais Popular</string>
+    <string name="title_sort_by_rated">Mais Votado</string>
+    <string name="title_language_pt">Português</string>
+    <string name="title_language_us">Inglês</string>
+    <string name="title_sort">Ordenação</string>
+    <string name="title_language">Idioma</string>
+</resources>

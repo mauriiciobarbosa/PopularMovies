@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
         android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:theme="@style/MovieToolbarTheme"
         android:background="@android:color/transparent">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -19,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark"
             app:contentScrim="?attr/colorPrimary"
             app:statusBarScrim="@android:color/transparent"
             app:expandedTitleMarginEnd="@dimen/article_keylines"
@@ -39,8 +38,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:layout_collapseMode="pin" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
@@ -58,9 +56,25 @@
             android:paddingRight="@dimen/md_keylines"
             android:paddingTop="@dimen/md_keylines">
 
-            <TextView
-                style="@style/MovieDetailTitle"
-                android:text="@string/label_original_title" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/MovieDetailTitle"
+                    android:layout_width="wrap_content"
+                    android:text="@string/label_original_title" />
+
+                <ImageView
+                    android:id="@+id/ivAdultMovie"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@mipmap/ic_adult_movie"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+
 
             <TextView
                 android:id="@+id/tvOriginalTitle"
@@ -89,7 +103,16 @@
 
             <TextView
                 style="@style/MovieDetailTitle"
-                android:text="@string/label_stars" />
+                android:text="@string/label_popularity" />
+
+            <TextView
+                android:id="@+id/tvPopularity"
+                style="@style/MovieDetailDescription"
+                tools:text="@string/ex_popularity" />
+
+            <TextView
+                style="@style/MovieDetailTitle"
+                android:text="@string/label_rate" />
 
             <RatingBar
                 android:id="@+id/rbMovieStars"

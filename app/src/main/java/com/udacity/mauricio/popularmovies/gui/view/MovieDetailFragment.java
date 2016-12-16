@@ -33,8 +33,8 @@ import com.udacity.mauricio.popularmovies.utils.AppUtils;
 
 public class MovieDetailFragment extends Fragment {
 
-    protected ImageView image;
-    protected TextView tvOriginalTitle, tvOverview, tvGender, tvReleaseDate;
+    protected ImageView image, ivAdultMovie;
+    protected TextView tvOriginalTitle, tvOverview, tvGender, tvReleaseDate, tvPopularity;
     protected RatingBar rbMovieStars;
     protected Toolbar toolbar;
     protected CollapsingToolbarLayout collapsingToolbar;
@@ -47,7 +47,7 @@ public class MovieDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View viewRoot = inflater.inflate(R.layout.fragment_detail_movie, container, false);
+        View viewRoot = inflater.inflate(R.layout.frag_detail_movie, container, false);
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         toolbar = (Toolbar) viewRoot.findViewById(R.id.toolbar);
@@ -55,8 +55,10 @@ public class MovieDetailFragment extends Fragment {
         appBarLayout = (AppBarLayout) viewRoot.findViewById(R.id.appbar);
 
         image = (ImageView) viewRoot.findViewById(R.id.image);
+        ivAdultMovie = (ImageView) viewRoot.findViewById(R.id.ivAdultMovie);
         tvOriginalTitle = (TextView) viewRoot.findViewById(R.id.tvOriginalTitle);
         tvOverview = (TextView) viewRoot.findViewById(R.id.tvOverview);
+        tvPopularity = (TextView) viewRoot.findViewById(R.id.tvPopularity);
         tvGender = (TextView) viewRoot.findViewById(R.id.tvGender);
         tvReleaseDate = (TextView) viewRoot.findViewById(R.id.tvReleaseDate);
         rbMovieStars = (RatingBar) viewRoot.findViewById(R.id.rbMovieStars);
@@ -67,8 +69,7 @@ public class MovieDetailFragment extends Fragment {
 
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        // Set Collapsing Toolbar layout to the screen
-        // Set title of Detail page
+
         collapsingToolbar.setTitle(movie.title);
 
         configureTransactionNames();
@@ -81,11 +82,11 @@ public class MovieDetailFragment extends Fragment {
         Picasso.with(context).load(context.getString(R.string.baseUrl_image) + movie.posterPath).into(image);
         tvOriginalTitle.setText(movie.originalTitle);
         tvOverview.setText(movie.overview);
-        //tvGender.setText(movie.overview);
+        tvPopularity.setText(String.format("%.2f%%", movie.popularity));
+        ivAdultMovie.setVisibility(movie.adult ? View.VISIBLE : View.GONE);
         tvReleaseDate.setText(movie.releaseDate);
-
-        float voteAverage = Double.valueOf(movie.voteAverage).intValue();
-        rbMovieStars.setRating(voteAverage / 2);
+        rbMovieStars.setRating(Double.valueOf(movie.voteAverage).intValue() / 2);
+        //tvGender.setText(movie.overview);
 
     }
 
@@ -95,21 +96,23 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void configureToolbarColor() {
-        Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
-        Palette palette = Palette.from(bitmap).generate();
-        int primaryColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
-        final int toolbarColor = palette.getMutedColor(primaryColor);
-        collapsingToolbar.setContentScrimColor(toolbarColor);
+        if (image != null && image.getDrawable() != null) {
+            Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
+            Palette palette = Palette.from(bitmap).generate();
+            int primaryColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
+            final int toolbarColor = palette.getMutedColor(primaryColor);
+            collapsingToolbar.setContentScrimColor(toolbarColor);
 
-        appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
-            @Override
-            public void onStateChanged(AppBarLayout appBarLayout, State state) {
-                int statusBarColor = (state == AppBarStateChangeListener.State.COLLAPSED) ?
-                        AppUtils.getDarketColor(toolbarColor) : Color.TRANSPARENT;
-                changeStatusBarColor(statusBarColor);
-            }
+            appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
+                @Override
+                public void onStateChanged(AppBarLayout appBarLayout, State state) {
+                    int statusBarColor = (state == AppBarStateChangeListener.State.COLLAPSED) ?
+                            AppUtils.getDarketColor(toolbarColor) : Color.TRANSPARENT;
+                    changeStatusBarColor(statusBarColor);
+                }
 
-        });
+            });
+        }
     }
 
     @TargetApi(21)

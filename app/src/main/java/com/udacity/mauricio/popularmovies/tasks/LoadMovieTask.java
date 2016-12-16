@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.InvalidParameterException;
 
 /**
  * Created by mauricio-MTM on 12/6/2016.
@@ -24,7 +25,14 @@ public class LoadMovieTask extends AsyncTask<String, Void, PageDTO> {
 
     private static final String LOG_TAG = LoadMovieTask.class.getSimpleName();
     private static final String KEY_PARAM = "api_key";
+    private static final String LANGUAGE_PARAM = "language";
+    private static final String SORT_PARAM = "sort_by";
     private static final String PAGE_PARAM = "page";
+
+    public static final int LANGUAGE_PARAM_POSITION = 0;
+    public static final int SORT_PARAM_POSITION = 1;
+    public static final int PAGE_PARAM_POSITION = 2;
+    public static final int PARAM_NUMBER = 3;
 
     private LoadMovieListener listener;
     private Context context;
@@ -46,12 +54,21 @@ public class LoadMovieTask extends AsyncTask<String, Void, PageDTO> {
         BufferedReader reader = null;
         PageDTO result = null;
 
-        String page = params[0];
+        if (params.length < PARAM_NUMBER)
+            throw new InvalidParameterException("This task must be executed with 3 parameters: language, sortBy and page number.");
+
+        String language = params[LANGUAGE_PARAM_POSITION];
+        String sortBy = params[SORT_PARAM_POSITION];
+        String page = params[PAGE_PARAM_POSITION];
 
         Uri builtUri = Uri.parse(context.getString(R.string.baseUrl)).buildUpon()
+                .appendQueryParameter(LANGUAGE_PARAM, language)
+                .appendQueryParameter(SORT_PARAM, sortBy)
                 .appendQueryParameter(PAGE_PARAM, page)
                 .appendQueryParameter(KEY_PARAM, context.getString(R.string.api_key))
                 .build();
+
+        Log.i(LOG_TAG, "Uri: " + builtUri.toString());
 
         try {
             URL url = new URL(builtUri.toString());

@@ -46,4 +46,8 @@ public class MovieDTO implements Serializable {
     @Expose
     public Double voteAverage;
 
+    @SerializedName("adult")
+    @Expose
+    public Boolean adult;
+
 }

@@ -10,9 +10,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/BaseTheme">
-        <activity
-            android:name=".gui.view.MainActivity">
+        android:theme="@style/BaseTheme"
+        android:configChanges="locale|orientation">
+        <activity android:name=".gui.view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -20,6 +20,13 @@
         </activity>
         <activity
             android:name=".gui.view.DetailActivity"
+            android:parentActivityName=".gui.view.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".gui.view.MainActivity" />
+        </activity>
+        <activity
+            android:name=".gui.view.SettingsActivity"
             android:parentActivityName=".gui.view.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
