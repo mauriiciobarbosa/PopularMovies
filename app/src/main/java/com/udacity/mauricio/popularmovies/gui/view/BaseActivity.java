@@ -18,8 +18,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String language = AppUtils.getPreferenceValue(this, getString(R.string.pref_language_key), getString(R.string.pref_language_default_value));
-        language = language.substring(0, 2);
-        AppUtils.setLocale(this, language);
+        AppUtils.setLocale(this, language.substring(0, 2));
     }
 
     protected void restart() {

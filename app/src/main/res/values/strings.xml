@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">RepoMovies</string>
     <string name="msg_error_on_load_images">Unable to load images</string>
+    <string name="msg_has_no_more_data">Has no more data available</string>
 
     <string name="api_key" translatable="false">781f5b39ef7222ceb862dcde957ec3f4</string>
     <string name="baseUrl" translatable="false">https://api.themoviedb.org/3/discover/movie</string>

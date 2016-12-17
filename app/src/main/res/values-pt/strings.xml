@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="msg_error_on_load_images">Não foi possível carregar imagens</string>
+    <string name="msg_has_no_more_data">Não há mais imagens disponíveis</string>
 
     <string name="label_original_title">Título Original</string>
     <string name="label_overview">Sipnose</string>

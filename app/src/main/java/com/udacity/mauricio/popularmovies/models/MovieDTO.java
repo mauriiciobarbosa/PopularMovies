@@ -22,10 +22,6 @@ public class MovieDTO implements Serializable {
     @Expose
     public String originalTitle;
 
-    @SerializedName("original_language")
-    @Expose
-    public String originalLanguage;
-
     @SerializedName("popularity")
     @Expose
     public Double popularity;

@@ -1,14 +1,12 @@
 package com.udacity.mauricio.popularmovies.gui.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,8 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.gui.adapter.MovieAdapter;
@@ -37,7 +35,9 @@ import java.util.List;
 
 
 public class MovieListFragment extends Fragment
-        implements LoadMovieTask.LoadMovieListener, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+        implements LoadMovieTask.LoadMovieListener,
+        View.OnClickListener,
+        SwipeRefreshLayout.OnRefreshListener {
 
     protected RecyclerView rvMovies;
     protected TextView tvMessage;
@@ -49,8 +49,7 @@ public class MovieListFragment extends Fragment
     protected MovieAdapter adapter;
     protected LoadMovieTask task;
 
-    protected boolean isSync;
-    private int currentPage;
+    private PageDTO currentPage;
     private String sort, language;
 
     private BaseActivity activity;
@@ -93,12 +92,16 @@ public class MovieListFragment extends Fragment
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                task = new LoadMovieTask(activity, MovieListFragment.this);
-                List<String> params = new ArrayList<>();
-                params.add(LoadMovieTask.LANGUAGE_PARAM_POSITION, language);
-                params.add(LoadMovieTask.SORT_PARAM_POSITION, sort);
-                params.add(LoadMovieTask.PAGE_PARAM_POSITION, String.valueOf(page + 1));
-                task.execute(params.toArray(new String[LoadMovieTask.PARAM_NUMBER]));
+                if (currentPage.page < page) {
+                    task = new LoadMovieTask(activity, MovieListFragment.this);
+                    List<String> params = new ArrayList<>();
+                    params.add(LoadMovieTask.LANGUAGE_PARAM_POSITION, language);
+                    params.add(LoadMovieTask.SORT_PARAM_POSITION, sort);
+                    params.add(LoadMovieTask.PAGE_PARAM_POSITION, String.valueOf(page + 1));
+                    task.execute(params.toArray(new String[LoadMovieTask.PARAM_NUMBER]));
+                } else {
+                    Snackbar.make(rvMovies, R.string.msg_has_no_more_data, Snackbar.LENGTH_SHORT).show();
+                }
             }
         };
 
@@ -112,7 +115,7 @@ public class MovieListFragment extends Fragment
     public void onResume() {
         super.onResume();
 
-        if (!AppUtils.hasInternetConnection(getContext()) && !isSync) {
+        if (!AppUtils.hasInternetConnection(getContext()) && adapter.getItemCount() == 0) {
             showMessage();
             return;
         }
@@ -171,9 +174,7 @@ public class MovieListFragment extends Fragment
 
         task = new LoadMovieTask(getContext(), this);
         task.execute(params.toArray(new String[LoadMovieTask.PARAM_NUMBER]));
-        isSync = true;
     }
-
 
     private void showMessage() {
         rvMovies.setVisibility(View.GONE);
@@ -190,14 +191,14 @@ public class MovieListFragment extends Fragment
 
         boolean hasNoMoreMovies = page == null || page.movies == null || page.movies.isEmpty();
 
-        if (hasNoMoreMovies && currentPage == 0) {
+        if (hasNoMoreMovies && currentPage == null) {
             showMessage();
             return;
         }
 
-        adapter.setMovies(page.movies);
+        currentPage = page;
 
-        currentPage = page.page;
+        adapter.setMovies(currentPage.movies);
 
         swRefresh.setRefreshing(false);
     }

@@ -20,7 +20,6 @@ import java.security.InvalidParameterException;
 /**
  * Created by mauricio-MTM on 12/6/2016.
  */
-
 public class LoadMovieTask extends AsyncTask<String, Void, PageDTO> {
 
     private static final String LOG_TAG = LoadMovieTask.class.getSimpleName();
@@ -55,7 +54,7 @@ public class LoadMovieTask extends AsyncTask<String, Void, PageDTO> {
         PageDTO result = null;
 
         if (params.length < PARAM_NUMBER)
-            throw new InvalidParameterException("This task must be executed with 3 parameters: language, sortBy and page number.");
+            throw new InvalidParameterException("This task must be executed with " + PARAM_NUMBER + " parameters: language, sortBy and page number.");
 
         String language = params[LANGUAGE_PARAM_POSITION];
         String sortBy = params[SORT_PARAM_POSITION];

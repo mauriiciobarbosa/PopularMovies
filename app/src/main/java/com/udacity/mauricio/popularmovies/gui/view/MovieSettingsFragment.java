@@ -10,9 +10,6 @@ import android.text.TextUtils;
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.utils.AppUtils;
 
-/**
- *
- */
 public class MovieSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
     private boolean starting;

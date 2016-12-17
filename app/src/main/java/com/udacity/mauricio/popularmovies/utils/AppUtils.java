@@ -15,7 +15,6 @@ import java.util.Locale;
 /**
  * Created by mauricio-MTM on 12/6/2016.
  */
-
 public final class AppUtils {
 
     public static boolean hasInternetConnection(Context context) {
@@ -34,21 +33,12 @@ public final class AppUtils {
     }
 
     public static void setLocale(Context context, String lang) {
-
         Locale myLocale = new Locale(lang);
         Resources res = context.getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();
         conf.locale = myLocale;
         res.updateConfiguration(conf, dm);
-        /*
-        Locale locale = new Locale(lang);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        context.getResources().updateConfiguration(config,
-                context.getResources().getDisplayMetrics());
-                */
     }
 
     public static String getPreferenceValue(Context context, String key, String defaultValue) {
