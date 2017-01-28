@@ -2,15 +2,8 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".gui.view.DetailActivity">
-
-    <fragment
-        android:id="@+id/frag_popular_movies"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.udacity.mauricio.popularmovies.gui.view.MovieDetailFragment" />
-
-</FrameLayout>
+    tools:context=".gui.view.DetailActivity"
+    tools:ignore="MergeRootFrame" />

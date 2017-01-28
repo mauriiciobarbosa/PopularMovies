@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    style="@style/MovieCardLand">
+
+    <ImageView
+        android:id="@+id/ivPoster"
+        style="@style/PosterStyleLand"
+        tools:src="@drawable/example" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/MovieTitleStyleLand"
+        tools:text="@string/ex_movie_title"
+        android:layout_toRightOf="@+id/ivPoster"
+        android:layout_toEndOf="@+id/ivPoster" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        style="@style/MovieSipnoseStyleLand"
+        tools:text="@string/ex_movie_overview"
+        android:layout_below="@+id/tvTitle"
+        android:layout_toRightOf="@+id/ivPoster"
+        android:layout_toEndOf="@+id/ivPoster"/>
+
+</RelativeLayout>

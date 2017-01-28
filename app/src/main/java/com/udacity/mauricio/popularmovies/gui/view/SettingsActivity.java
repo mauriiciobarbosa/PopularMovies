@@ -1,20 +1,22 @@
 package com.udacity.mauricio.popularmovies.gui.view;
 
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.udacity.mauricio.popularmovies.R;
-import com.udacity.mauricio.popularmovies.utils.AppUtils;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
+@EActivity(R.layout.actv_settings)
 public class SettingsActivity extends BaseActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.actv_settings);
+    @ViewById
+    protected Toolbar toolbar;
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    @AfterViews
+    protected void init() {
         toolbar.setTitle(getString(R.string.title_preferences));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

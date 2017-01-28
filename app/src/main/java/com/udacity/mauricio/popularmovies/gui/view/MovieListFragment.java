@@ -1,26 +1,19 @@
 package com.udacity.mauricio.popularmovies.gui.view;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.gui.adapter.MovieAdapter;
@@ -30,19 +23,38 @@ import com.udacity.mauricio.popularmovies.tasks.LoadMovieTask;
 import com.udacity.mauricio.popularmovies.utils.AppUtils;
 import com.udacity.mauricio.popularmovies.utils.EndlessRecyclerViewScrollListener;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.BooleanRes;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
+@OptionsMenu(R.menu.main)
+@EFragment(R.layout.frag_list_movie)
 public class MovieListFragment extends Fragment
         implements LoadMovieTask.LoadMovieListener,
         View.OnClickListener,
         SwipeRefreshLayout.OnRefreshListener {
 
+    @ViewById
     protected RecyclerView rvMovies;
+
+    @ViewById
     protected TextView tvMessage;
+
+    @ViewById
     protected Toolbar toolbar;
+
+    @ViewById
     protected SwipeRefreshLayout swRefresh;
+
+    @BooleanRes
+    protected boolean twoPane;
+
 
     // Store a member variable for the listener
     protected EndlessRecyclerViewScrollListener scrollListener;
@@ -54,30 +66,22 @@ public class MovieListFragment extends Fragment
 
     private BaseActivity activity;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
+    private Callback listener;
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-
-        View viewRoot = inflater.inflate(R.layout.frag_list_movie, container, false);
-
-        rvMovies = (RecyclerView) viewRoot.findViewById(R.id.rvMovies);
-        tvMessage = (TextView) viewRoot.findViewById(R.id.tvMessage);
-
-        swRefresh = (SwipeRefreshLayout) viewRoot.findViewById(R.id.swRefresh);
-        swRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
+    @AfterViews
+    public void init() {
+        swRefresh.setColorSchemeResources(R.color.colorAccent,
+                R.color.colorPrimary, R.color.colorPrimaryDark);
         swRefresh.setOnRefreshListener(this);
 
-        toolbar = (Toolbar) viewRoot.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
 
         activity = (BaseActivity) getActivity();
+
+        if (!(activity instanceof Callback))
+            throw new IllegalStateException("Activity must implement MovieListFragment.Callback");
+
+        listener = (Callback) activity;
         activity.setSupportActionBar(toolbar);
 
         adapter = new MovieAdapter(getContext(), this);
@@ -86,13 +90,17 @@ public class MovieListFragment extends Fragment
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvMovies.setLayoutManager(linearLayoutManager);
 
+        if (twoPane)
+            rvMovies.addItemDecoration(new DividerItemDecoration(getContext(),
+                    linearLayoutManager.getOrientation()));
+
         // Retain an instance so that you can call `resetState()` for fresh searches
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                if (currentPage.page < page) {
+                if (currentPage.totalPages > page) {
                     task = new LoadMovieTask(activity, MovieListFragment.this);
                     List<String> params = new ArrayList<>();
                     params.add(LoadMovieTask.LANGUAGE_PARAM_POSITION, language);
@@ -107,8 +115,6 @@ public class MovieListFragment extends Fragment
 
         // Adds the scroll listener to RecyclerView
         rvMovies.addOnScrollListener(scrollListener);
-
-        return viewRoot;
     }
 
     @Override
@@ -136,28 +142,16 @@ public class MovieListFragment extends Fragment
         return TextUtils.equals(sort, sortByPref) && TextUtils.equals(language, languagePref);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.main, menu);
+    @OptionsItem
+    protected void actionRefresh() {
+        loadFirstMoviesPage();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                loadFirstMoviesPage();
-                break;
-            case R.id.action_settings:
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity);
-                Intent intent = new Intent(activity, SettingsActivity.class);
-                ActivityCompat.startActivity(activity, intent, options.toBundle());
-                break;
-
-        }
-
-        return super.onOptionsItemSelected(item);
+    @OptionsItem
+    protected void actionSettings() {
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity);
+        Intent intent = new Intent(activity, SettingsActivity_.class);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
     private void loadFirstMoviesPage() {
@@ -212,14 +206,15 @@ public class MovieListFragment extends Fragment
                 Pair.create(view.findViewById(R.id.ivPoster), getString(R.string.movie_poster_trasition_name)),
                 Pair.create(view.findViewById(R.id.tvDescription), getString(R.string.movie_overview_trasition_name)));
 
-        Intent intent = new Intent(activity, DetailActivity.class);
-        intent.putExtra(DetailActivity.EXTRA_MOVIE, movie);
-
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        listener.onItemSelected(movie, options);
     }
 
     @Override
     public void onRefresh() {
         loadFirstMoviesPage();
+    }
+
+    public interface Callback {
+        void onItemSelected(MovieDTO movie, ActivityOptionsCompat options);
     }
 }

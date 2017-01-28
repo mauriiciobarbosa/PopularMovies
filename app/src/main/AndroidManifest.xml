@@ -11,25 +11,25 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/BaseTheme">
-        <activity android:name=".gui.view.MainActivity">
+        <activity android:name=".gui.view.MainActivity_">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".gui.view.DetailActivity"
-            android:parentActivityName=".gui.view.MainActivity">
+            android:name=".gui.view.DetailActivity_"
+            android:parentActivityName=".gui.view.MainActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".gui.view.MainActivity" />
+                android:value=".gui.view.MainActivity_" />
         </activity>
         <activity
-            android:name=".gui.view.SettingsActivity"
-            android:parentActivityName=".gui.view.MainActivity">
+            android:name=".gui.view.SettingsActivity_"
+            android:parentActivityName=".gui.view.MainActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".gui.view.MainActivity" />
+                android:value=".gui.view.MainActivity_" />
         </activity>
     </application>
 

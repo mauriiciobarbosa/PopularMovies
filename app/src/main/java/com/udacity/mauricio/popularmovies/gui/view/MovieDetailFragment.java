@@ -5,8 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
@@ -15,9 +13,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -30,52 +26,52 @@ import com.udacity.mauricio.popularmovies.models.MovieDTO;
 import com.udacity.mauricio.popularmovies.utils.AppBarStateChangeListener;
 import com.udacity.mauricio.popularmovies.utils.AppUtils;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
+@EFragment(R.layout.frag_detail_movie)
 public class MovieDetailFragment extends Fragment {
 
+    @ViewById
     protected ImageView image, ivAdultMovie;
+
+    @ViewById
     protected TextView tvOriginalTitle, tvOverview, tvGender, tvReleaseDate, tvPopularity;
+
+    @ViewById
     protected RatingBar rbMovieStars;
+
+    @ViewById
     protected Toolbar toolbar;
+
+    @ViewById
     protected CollapsingToolbarLayout collapsingToolbar;
+
+    @ViewById(R.id.appbar)
     protected AppBarLayout appBarLayout;
 
+    @FragmentArg(DetailActivity.EXTRA_MOVIE)
     protected MovieDTO movie;
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-
-        View viewRoot = inflater.inflate(R.layout.frag_detail_movie, container, false);
-
+    @AfterViews
+    protected void init() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        toolbar = (Toolbar) viewRoot.findViewById(R.id.toolbar);
-        collapsingToolbar = (CollapsingToolbarLayout) viewRoot.findViewById(R.id.collapsing_toolbar);
-        appBarLayout = (AppBarLayout) viewRoot.findViewById(R.id.appbar);
 
-        image = (ImageView) viewRoot.findViewById(R.id.image);
-        ivAdultMovie = (ImageView) viewRoot.findViewById(R.id.ivAdultMovie);
-        tvOriginalTitle = (TextView) viewRoot.findViewById(R.id.tvOriginalTitle);
-        tvOverview = (TextView) viewRoot.findViewById(R.id.tvOverview);
-        tvPopularity = (TextView) viewRoot.findViewById(R.id.tvPopularity);
-        tvGender = (TextView) viewRoot.findViewById(R.id.tvGender);
-        tvReleaseDate = (TextView) viewRoot.findViewById(R.id.tvReleaseDate);
-        rbMovieStars = (RatingBar) viewRoot.findViewById(R.id.rbMovieStars);
+        if (movie != null) {
+            fillMovieInfo(activity, movie);
 
-        movie = (MovieDTO) getActivity().getIntent().getSerializableExtra(DetailActivity.EXTRA_MOVIE);
+            activity.setSupportActionBar(toolbar);
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        fillMovieInfo(activity, movie);
+            collapsingToolbar.setTitle(movie.title);
 
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            configureTransactionNames();
+            configureToolbarColor();
+        }
 
-        collapsingToolbar.setTitle(movie.title);
-
-        configureTransactionNames();
-        configureToolbarColor();
-
-        return viewRoot;
     }
 
     private void fillMovieInfo(Context context, MovieDTO movie) {
@@ -87,7 +83,6 @@ public class MovieDetailFragment extends Fragment {
         tvReleaseDate.setText(movie.releaseDate);
         rbMovieStars.setRating(Double.valueOf(movie.voteAverage).intValue() / 2);
         //tvGender.setText(movie.overview);
-
     }
 
     private void configureTransactionNames() {
@@ -121,6 +116,5 @@ public class MovieDetailFragment extends Fragment {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(statusBarColor);
     }
-
 
 }

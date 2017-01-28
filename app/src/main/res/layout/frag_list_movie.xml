@@ -33,10 +33,9 @@
             android:id="@+id/rvMovies"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:paddingTop="@dimen/md_keylines"
             android:clipToPadding="false"
             android:scrollbars="vertical"
-            android:foreground="?android:attr/selectableItemBackground" />
+            android:background="@android:color/white"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
