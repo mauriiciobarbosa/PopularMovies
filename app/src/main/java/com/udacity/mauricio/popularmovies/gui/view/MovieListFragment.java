@@ -12,18 +12,21 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.udacity.mauricio.popularmovies.R;
+import com.udacity.mauricio.popularmovies.conn.ConnectionHandler;
 import com.udacity.mauricio.popularmovies.gui.adapter.MovieAdapter;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
 import com.udacity.mauricio.popularmovies.models.PageDTO;
-import com.udacity.mauricio.popularmovies.tasks.LoadMovieTask;
+import com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask;
 import com.udacity.mauricio.popularmovies.utils.AppUtils;
 import com.udacity.mauricio.popularmovies.utils.EndlessRecyclerViewScrollListener;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -36,9 +39,11 @@ import java.util.List;
 @OptionsMenu(R.menu.main)
 @EFragment(R.layout.frag_list_movie)
 public class MovieListFragment extends Fragment
-        implements LoadMovieTask.LoadMovieListener,
-        View.OnClickListener,
+    implements View.OnClickListener,
         SwipeRefreshLayout.OnRefreshListener {
+
+    private static final String LOG_TAG = MovieListFragment.class.getSimpleName();
+    private static final int GET_MOVIES_REQUEST_CODE = 1;
 
     @ViewById
     protected RecyclerView rvMovies;
@@ -53,13 +58,14 @@ public class MovieListFragment extends Fragment
     protected SwipeRefreshLayout swRefresh;
 
     @BooleanRes
-    protected boolean twoPane;
+    protected boolean isLand;
 
+    @Bean
+    protected TheMovieDbTask task;
 
     // Store a member variable for the listener
     protected EndlessRecyclerViewScrollListener scrollListener;
     protected MovieAdapter adapter;
-    protected LoadMovieTask task;
 
     private PageDTO currentPage;
     private String sort, language;
@@ -67,6 +73,8 @@ public class MovieListFragment extends Fragment
     private BaseActivity activity;
 
     private Callback listener;
+
+    private ConnectionHandler movieHandler;
 
     @AfterViews
     public void init() {
@@ -90,7 +98,7 @@ public class MovieListFragment extends Fragment
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvMovies.setLayoutManager(linearLayoutManager);
 
-        if (twoPane)
+        if (isLand)
             rvMovies.addItemDecoration(new DividerItemDecoration(getContext(),
                     linearLayoutManager.getOrientation()));
 
@@ -101,12 +109,11 @@ public class MovieListFragment extends Fragment
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
                 if (currentPage.totalPages > page) {
-                    task = new LoadMovieTask(activity, MovieListFragment.this);
                     List<String> params = new ArrayList<>();
-                    params.add(LoadMovieTask.LANGUAGE_PARAM_POSITION, language);
-                    params.add(LoadMovieTask.SORT_PARAM_POSITION, sort);
-                    params.add(LoadMovieTask.PAGE_PARAM_POSITION, String.valueOf(page + 1));
-                    task.execute(params.toArray(new String[LoadMovieTask.PARAM_NUMBER]));
+                    params.add(TheMovieDbTask.LANGUAGE_PARAM_POSITION, language);
+                    params.add(TheMovieDbTask.SORT_PARAM_POSITION, sort);
+                    params.add(TheMovieDbTask.PAGE_PARAM_POSITION, String.valueOf(page + 1));
+                    loadMovies(params.toArray(new String[TheMovieDbTask.PARAM_NUMBER]));
                 } else {
                     Snackbar.make(rvMovies, R.string.msg_has_no_more_data, Snackbar.LENGTH_SHORT).show();
                 }
@@ -161,40 +168,22 @@ public class MovieListFragment extends Fragment
         sort = AppUtils.getPreferenceValue(activity, getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
         language = AppUtils.getPreferenceValue(activity, getString(R.string.pref_language_key), getString(R.string.pref_language_default_value));
 
-        List<String> params = new ArrayList<>(LoadMovieTask.PARAM_NUMBER);
-        params.add(LoadMovieTask.LANGUAGE_PARAM_POSITION, language);
-        params.add(LoadMovieTask.SORT_PARAM_POSITION, sort);
-        params.add(LoadMovieTask.PAGE_PARAM_POSITION, "1");
+        List<String> params = new ArrayList<>(TheMovieDbTask.PARAM_NUMBER);
+        params.add(TheMovieDbTask.LANGUAGE_PARAM_POSITION, language);
+        params.add(TheMovieDbTask.SORT_PARAM_POSITION, sort);
+        params.add(TheMovieDbTask.PAGE_PARAM_POSITION, "1");
 
-        task = new LoadMovieTask(getContext(), this);
-        task.execute(params.toArray(new String[LoadMovieTask.PARAM_NUMBER]));
+        loadMovies(params.toArray(new String[TheMovieDbTask.PARAM_NUMBER]));
+    }
+
+    public void loadMovies(String... params) {
+        task.setHandler(GET_MOVIES_REQUEST_CODE, getMovieHandler());
+        task.getMovies(params);
     }
 
     private void showMessage() {
         rvMovies.setVisibility(View.GONE);
         tvMessage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onPreExecute() {
-        swRefresh.setRefreshing(true);
-    }
-
-    @Override
-    public void onLoadMovie(PageDTO page) {
-
-        boolean hasNoMoreMovies = page == null || page.movies == null || page.movies.isEmpty();
-
-        if (hasNoMoreMovies && currentPage == null) {
-            showMessage();
-            return;
-        }
-
-        currentPage = page;
-
-        adapter.setMovies(currentPage.movies);
-
-        swRefresh.setRefreshing(false);
     }
 
     @Override
@@ -212,6 +201,40 @@ public class MovieListFragment extends Fragment
     @Override
     public void onRefresh() {
         loadFirstMoviesPage();
+    }
+
+    private ConnectionHandler getMovieHandler() {
+        if (movieHandler == null) {
+            movieHandler = new ConnectionHandler() {
+                @Override
+                public void onPreExecute(int requestCode) {
+                    swRefresh.setRefreshing(true);
+                }
+
+                @Override
+                public void onConnectionSucess(int requestCode, Object result) {
+                    PageDTO page = (PageDTO) result;
+
+                    boolean hasNoMoreMovies = page == null || page.movies == null || page.movies.isEmpty();
+
+                    swRefresh.setRefreshing(false);
+
+                    if (hasNoMoreMovies && currentPage == null) {
+                        showMessage();
+                        return;
+                    }
+
+                    currentPage = page;
+                    adapter.setMovies(currentPage.movies);
+                }
+
+                @Override
+                public void onConnectionError(int requestCode, Exception e) {
+                    Log.e(LOG_TAG, "Error on getMovies: " + e.getMessage());
+                }
+            };
+        }
+        return movieHandler;
     }
 
     public interface Callback {

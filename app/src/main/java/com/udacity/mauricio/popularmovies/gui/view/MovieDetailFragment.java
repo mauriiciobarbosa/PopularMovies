@@ -21,6 +21,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.udacity.mauricio.popularmovies.BuildConfig;
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
 import com.udacity.mauricio.popularmovies.utils.AppBarStateChangeListener;
@@ -28,7 +29,6 @@ import com.udacity.mauricio.popularmovies.utils.AppUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
@@ -75,7 +75,7 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void fillMovieInfo(Context context, MovieDTO movie) {
-        Picasso.with(context).load(context.getString(R.string.baseUrl_image) + movie.posterPath).into(image);
+        Picasso.with(context).load(BuildConfig.BASE_URL_IMAGES + movie.posterPath).into(image);
         tvOriginalTitle.setText(movie.originalTitle);
         tvOverview.setText(movie.overview);
         tvPopularity.setText(String.format("%.2f%%", movie.popularity));

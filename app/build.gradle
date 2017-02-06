@@ -27,6 +27,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildTypes.each {
+        it.buildConfigField 'String', 'BASE_URL', '"https://api.themoviedb.org/3/"'
+        it.buildConfigField 'String', 'BASE_URL_IMAGES', '"http://image.tmdb.org/t/p/w780"'
+        it.buildConfigField 'String', 'API_KEY', '"781f5b39ef7222ceb862dcde957ec3f4"'
+    }
 }
 
 dependencies {
@@ -46,4 +51,6 @@ dependencies {
     annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     compile 'com.annimon:stream:1.1.4'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 }

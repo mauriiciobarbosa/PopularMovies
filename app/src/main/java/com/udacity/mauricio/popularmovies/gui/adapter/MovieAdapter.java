@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.udacity.mauricio.popularmovies.BuildConfig;
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
 
@@ -40,7 +41,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         MovieDTO movie = movies.get(position);
-        String thumb = context.getString(R.string.baseUrl_image) + movie.posterPath;
+        String thumb = BuildConfig.BASE_URL_IMAGES + movie.posterPath;
         Picasso.with(context).load(thumb).into(holder.poster);
         holder.title.setText(movie.title);
         holder.overview.setText(movie.overview);

@@ -3,10 +3,6 @@
     <string name="msg_error_on_load_images">Unable to load images</string>
     <string name="msg_has_no_more_data">Has no more data available</string>
 
-    <string name="api_key" translatable="false">781f5b39ef7222ceb862dcde957ec3f4</string>
-    <string name="baseUrl" translatable="false">https://api.themoviedb.org/3/discover/movie</string>
-    <string name="baseUrl_image" translatable="false">http://image.tmdb.org/t/p/w780</string>
-
     <string name="label_original_title">Original Title</string>
     <string name="label_overview">Overview</string>
     <string name="label_rate">Rate</string>

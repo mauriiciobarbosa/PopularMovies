@@ -26,17 +26,25 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/card_height</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:layout_marginTop">@dimen/md_keylines</item>
-        <item name="android:layout_marginBottom">@dimen/md_keylines</item>
-        <item name="android:layout_marginLeft">@dimen/md_keylines</item>
-        <item name="android:layout_marginRight">@dimen/md_keylines</item>
+        <item name="android:layout_margin">@dimen/md_keylines</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="MovieCard.Land">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">@dimen/md_keylines</item>
     </style>
 
     <style name="PosterStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">200dp</item>
         <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="PosterStyle.Land">
+        <item name="android:layout_width">150dp</item>
+        <item name="android:layout_height">100dp</item>
     </style>
 
     <style name="MovieTitleStyle">
@@ -49,14 +57,34 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <style name="MovieTitleStyle.Land">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/primaryText</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
     <style name="MovieSipnoseStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">@dimen/md_keylines</item>
+        <item name="android:layout_marginTop">@dimen/md_keylines</item>
+        <item name="android:layout_marginBottom">@dimen/md_keylines</item>
+        <item name="android:layout_marginLeft">@dimen/md_keylines</item>
+        <item name="android:layout_marginRight">@dimen/md_keylines</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/secondaryText</item>
         <item name="android:maxLines">3</item>
         <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="MovieSipnoseStyle.Land">
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginLeft">@dimen/md_keylines</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">5</item>
     </style>
 
     <style name="MovieDetailTitle">
@@ -73,40 +101,6 @@
         <item name="android:layout_marginBottom">@dimen/md_keylines</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/secondaryText</item>
-    </style>
-
-    <style name="PosterStyleLand">
-        <item name="android:layout_width">150dp</item>
-        <item name="android:layout_height">100dp</item>
-        <item name="android:scaleType">fitXY</item>
-    </style>
-
-    <style name="MovieTitleStyleLand">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">@dimen/md_keylines</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/primaryText</item>
-        <item name="android:maxLines">2</item>
-        <item name="android:ellipsize">end</item>
-    </style>
-
-    <style name="MovieSipnoseStyleLand">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">@dimen/md_keylines</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/secondaryText</item>
-        <item name="android:maxLines">4</item>
-        <item name="android:ellipsize">end</item>
-    </style>
-
-    <style name="MovieCardLand">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:layout_margin">@dimen/md_keylines</item>
-        <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
 
 </resources>
