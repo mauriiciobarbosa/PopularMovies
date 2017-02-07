@@ -72,7 +72,7 @@ public class MovieListFragment extends Fragment
 
     private BaseActivity activity;
 
-    private Callback listener;
+    private BaseActivity.Callback listener;
 
     private ConnectionHandler movieHandler;
 
@@ -86,10 +86,10 @@ public class MovieListFragment extends Fragment
 
         activity = (BaseActivity) getActivity();
 
-        if (!(activity instanceof Callback))
+        if (!(activity instanceof BaseActivity.Callback))
             throw new IllegalStateException("Activity must implement MovieListFragment.Callback");
 
-        listener = (Callback) activity;
+        listener = (BaseActivity.Callback) activity;
         activity.setSupportActionBar(toolbar);
 
         adapter = new MovieAdapter(getContext(), this);
@@ -237,7 +237,4 @@ public class MovieListFragment extends Fragment
         return movieHandler;
     }
 
-    public interface Callback {
-        void onItemSelected(MovieDTO movie, ActivityOptionsCompat options);
-    }
 }

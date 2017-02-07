@@ -50,7 +50,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="@dimen/article_keylines"
             android:paddingRight="@dimen/md_keylines"
@@ -73,8 +73,6 @@
                     android:layout_alignParentRight="true" />
 
             </RelativeLayout>
-
-
 
             <TextView
                 android:id="@+id/tvOriginalTitle"
@@ -133,6 +131,21 @@
                 android:id="@+id/tvReleaseDate"
                 style="@style/MovieDetailDescription"
                 tools:text="@string/ex_movie_release_date" />
+
+            <TextView
+                android:id="@+id/tvMovies"
+                style="@style/MovieDetailTitle"
+                android:text="@string/label_videos"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvVideos"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:clipToPadding="false"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
         </LinearLayout>
 

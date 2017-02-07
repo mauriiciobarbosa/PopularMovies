@@ -14,7 +14,7 @@ import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.res.BooleanRes;
 
 @EActivity(R.layout.actv_main)
-public class MainActivity extends BaseActivity implements MovieListFragment.Callback {
+public class MainActivity extends BaseActivity implements BaseActivity.Callback {
 
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
@@ -34,7 +34,8 @@ public class MainActivity extends BaseActivity implements MovieListFragment.Call
     }
 
     @Override
-    public void onItemSelected(MovieDTO movie, ActivityOptionsCompat options) {
+    public void onItemSelected(Object item, ActivityOptionsCompat options) {
+        MovieDTO movie = (MovieDTO) item;
         if (twoPane) {
             Bundle args = new Bundle();
             args.putSerializable(DetailActivity.EXTRA_MOVIE, movie);

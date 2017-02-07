@@ -3,9 +3,11 @@ package com.udacity.mauricio.popularmovies.gui.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import com.udacity.mauricio.popularmovies.R;
+import com.udacity.mauricio.popularmovies.models.MovieDTO;
 import com.udacity.mauricio.popularmovies.utils.AppUtils;
 
 /**
@@ -25,6 +27,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         finish();
         startActivity(intent);
+    }
+
+    public interface Callback {
+        void onItemSelected(Object item, ActivityOptionsCompat options);
     }
 
 }

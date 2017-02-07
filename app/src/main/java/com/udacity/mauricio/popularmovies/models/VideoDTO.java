@@ -11,18 +11,9 @@ import java.io.Serializable;
 public class VideoDTO implements Serializable {
 
     @Expose
-    public String id;
+    public String key;
 
     @Expose
     public String name;
-
-    @Expose
-    public int size;
-
-    @Expose
-    public String site;
-
-    @Expose
-    public String type;
 
 }

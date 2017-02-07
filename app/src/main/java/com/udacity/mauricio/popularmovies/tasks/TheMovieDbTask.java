@@ -21,13 +21,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by mauricio on 06/02/17.
  */
-@EBean
+@EBean(scope = EBean.Scope.Singleton)
 public class TheMovieDbTask {
 
-    private static final String KEY_PARAM = "api_key";
-    private static final String LANGUAGE_PARAM = "language";
-    private static final String SORT_PARAM = "sort_by";
-    private static final String PAGE_PARAM = "page";
+    public static final String KEY_PARAM = "api_key";
+    public static final String LANGUAGE_PARAM = "language";
+    public static final String SORT_PARAM = "sort_by";
+    public static final String PAGE_PARAM = "page";
 
     public static final int LANGUAGE_PARAM_POSITION = 0;
     public static final int SORT_PARAM_POSITION = 1;

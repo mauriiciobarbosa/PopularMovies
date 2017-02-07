@@ -10,6 +10,7 @@
     <string name="label_gender">Gênero</string>
     <string name="label_movie_length">Duração</string>
     <string name="label_release_date">Data de Lançamento</string>
+    <string name="label_videos">Videos</string>
     <string name="action_refresh">Atualizar</string>
     <string name="action_settings">Configurações</string>
 
