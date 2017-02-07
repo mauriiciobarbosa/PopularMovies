@@ -4,6 +4,8 @@ import com.udacity.mauricio.popularmovies.BuildConfig;
 import com.udacity.mauricio.popularmovies.conn.ConnectionHandler;
 import com.udacity.mauricio.popularmovies.conn.TheMovieDbAPI;
 import com.udacity.mauricio.popularmovies.models.PageDTO;
+import com.udacity.mauricio.popularmovies.models.PageReviewDTO;
+import com.udacity.mauricio.popularmovies.models.VideoResponseDTO;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -56,15 +58,12 @@ public class TheMovieDbTask {
     }
 
     /**
-     * This service's method will returns an PageDTO.
+     * This service's method will returns a PageDTO.
      *
      * @param params query parameters.
      */
     @Background
     public void getMovies(String... params) {
-
-        if (handler == null)
-            throw new IllegalStateException("Must set handler before start task");
 
         if (params.length < PARAM_NUMBER)
             throw new InvalidParameterException("This task must be executed with "
@@ -91,6 +90,55 @@ public class TheMovieDbTask {
             onConnectionError(requestCode, e);
         }
 
+    }
+
+    /**
+     * This service's method will returns a PageReviewDTO.
+     *
+     * @param params query parameters.
+     */
+    @Background
+    public void getReviews(int movieId, Map<String, String> params) {
+        if (params == null || !params.containsKey(PAGE_PARAM))
+            throw new InvalidParameterException("This task must be executed with at least "
+                    + PAGE_PARAM + " parameter.");
+
+        onPreExecute(requestCode);
+
+        config();
+
+        params.put(KEY_PARAM, BuildConfig.API_KEY);
+
+        try {
+            PageReviewDTO result = theMovieDbApi.getReviews(movieId, params).execute().body();
+            onConnectionSuccess(requestCode, result);
+        } catch (Exception e) {
+            onConnectionError(requestCode, e);
+        }
+    }
+
+    /**
+     * This service's method will returns a VideoResponseDTO.
+     *
+     * @param params query parameters.
+     */
+    @Background
+    public void getVideos(int movieId, Map<String, String> params) {
+        onPreExecute(requestCode);
+
+        config();
+
+        if (params == null)
+            params = new HashMap<>();
+
+        params.put(KEY_PARAM, BuildConfig.API_KEY);
+
+        try {
+            VideoResponseDTO result = theMovieDbApi.getVideos(movieId, params).execute().body();
+            onConnectionSuccess(requestCode, result);
+        } catch (Exception e) {
+            onConnectionError(requestCode, e);
+        }
     }
 
     @UiThread
