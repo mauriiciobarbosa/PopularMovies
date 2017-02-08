@@ -22,6 +22,6 @@ public class ReviewDTO implements Serializable {
     public String content;
 
     @Expose
-    public String uri;
+    public String url;
 
 }

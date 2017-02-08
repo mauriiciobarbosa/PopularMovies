@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_video"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    style="@style/VideoItem"
     android:orientation="vertical">
 
     <FrameLayout
@@ -31,6 +30,7 @@
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:layout_gravity="center"
+        android:gravity="center"
         tools:text="Official Tailer 2" />
 
 </LinearLayout>

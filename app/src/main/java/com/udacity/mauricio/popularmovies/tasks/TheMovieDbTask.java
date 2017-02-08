@@ -24,6 +24,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @EBean(scope = EBean.Scope.Singleton)
 public class TheMovieDbTask {
 
+    public static final int GET_MOVIES_REQUEST_CODE = 1;
+    public static final int GET_VIDEOS_REQUEST_CODE = 2;
+    public static final int GET_REVIEWS_REQUEST_CODE = 3;
+
     public static final String KEY_PARAM = "api_key";
     public static final String LANGUAGE_PARAM = "language";
     public static final String SORT_PARAM = "sort_by";
@@ -34,11 +38,9 @@ public class TheMovieDbTask {
     public static final int PAGE_PARAM_POSITION = 2;
     public static final int PARAM_NUMBER = 3;
 
-    protected ConnectionHandler handler;
-
-    protected int requestCode;
-
     private TheMovieDbAPI theMovieDbApi;
+
+    private Map<Integer, ConnectionHandler> requests = new HashMap<>();
 
     private void config() {
         theMovieDbApi = new Retrofit.Builder()
@@ -53,8 +55,7 @@ public class TheMovieDbTask {
         if (requestCode <= 0 || handler == null)
             throw new InvalidParameterException();
 
-        this.requestCode = requestCode;
-        this.handler = handler;
+        requests.put(requestCode, handler);
     }
 
     /**
@@ -69,7 +70,7 @@ public class TheMovieDbTask {
             throw new InvalidParameterException("This task must be executed with "
                     + PARAM_NUMBER + " parameters: language, sortBy and page number.");
 
-        onPreExecute(requestCode);
+        onPreExecute(GET_MOVIES_REQUEST_CODE);
 
         String language = params[LANGUAGE_PARAM_POSITION];
         String sortBy = params[SORT_PARAM_POSITION];
@@ -85,9 +86,9 @@ public class TheMovieDbTask {
 
         try {
             PageDTO result = theMovieDbApi.getMovies(queryParams).execute().body();
-            onConnectionSuccess(requestCode, result);
+            onConnectionSuccess(GET_MOVIES_REQUEST_CODE, result);
         } catch (Exception e) {
-            onConnectionError(requestCode, e);
+            onConnectionError(GET_MOVIES_REQUEST_CODE, e);
         }
 
     }
@@ -103,7 +104,7 @@ public class TheMovieDbTask {
             throw new InvalidParameterException("This task must be executed with at least "
                     + PAGE_PARAM + " parameter.");
 
-        onPreExecute(requestCode);
+        onPreExecute(GET_REVIEWS_REQUEST_CODE);
 
         config();
 
@@ -111,9 +112,9 @@ public class TheMovieDbTask {
 
         try {
             PageReviewDTO result = theMovieDbApi.getReviews(movieId, params).execute().body();
-            onConnectionSuccess(requestCode, result);
+            onConnectionSuccess(GET_REVIEWS_REQUEST_CODE, result);
         } catch (Exception e) {
-            onConnectionError(requestCode, e);
+            onConnectionError(GET_REVIEWS_REQUEST_CODE, e);
         }
     }
 
@@ -124,7 +125,7 @@ public class TheMovieDbTask {
      */
     @Background
     public void getVideos(int movieId, Map<String, String> params) {
-        onPreExecute(requestCode);
+        onPreExecute(GET_VIDEOS_REQUEST_CODE);
 
         config();
 
@@ -135,25 +136,27 @@ public class TheMovieDbTask {
 
         try {
             VideoResponseDTO result = theMovieDbApi.getVideos(movieId, params).execute().body();
-            onConnectionSuccess(requestCode, result);
+            onConnectionSuccess(GET_VIDEOS_REQUEST_CODE, result);
         } catch (Exception e) {
-            onConnectionError(requestCode, e);
+            onConnectionError(GET_VIDEOS_REQUEST_CODE, e);
         }
     }
 
     @UiThread
     protected void onPreExecute(int requestCode) {
-        handler.onPreExecute(requestCode);
+        requests.get(requestCode).onPreExecute(requestCode);
     }
 
     @UiThread
     protected void onConnectionSuccess(int requestCode, Object result) {
-        handler.onConnectionSucess(requestCode, result);
+        requests.get(requestCode).onConnectionSucess(requestCode, result);
+        requests.remove(requestCode);
     }
 
     @UiThread
     protected void onConnectionError(int requestCode, Exception error) {
-        handler.onConnectionError(requestCode, error);
+        requests.get(requestCode).onConnectionError(requestCode, error);
+        requests.remove(requestCode);
     }
 
 }

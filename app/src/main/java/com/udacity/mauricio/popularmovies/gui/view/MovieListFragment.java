@@ -36,6 +36,8 @@ import org.androidannotations.annotations.res.BooleanRes;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask.GET_MOVIES_REQUEST_CODE;
+
 @OptionsMenu(R.menu.main)
 @EFragment(R.layout.frag_list_movie)
 public class MovieListFragment extends Fragment
@@ -43,7 +45,6 @@ public class MovieListFragment extends Fragment
         SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = MovieListFragment.class.getSimpleName();
-    private static final int GET_MOVIES_REQUEST_CODE = 1;
 
     @ViewById
     protected RecyclerView rvMovies;

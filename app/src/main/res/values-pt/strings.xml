@@ -11,6 +11,9 @@
     <string name="label_movie_length">Duração</string>
     <string name="label_release_date">Data de Lançamento</string>
     <string name="label_videos">Videos</string>
+    <string name="label_reviews">Comentários</string>
+    <string name="label_by">Por</string>
+    <string name="label_see_more">Ver mais...</string>
     <string name="action_refresh">Atualizar</string>
     <string name="action_settings">Configurações</string>
 

@@ -103,4 +103,44 @@
         <item name="android:textColor">@color/secondaryText</item>
     </style>
 
+    <style name="ReviewCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/md_keylines</item>
+        <item name="android:layout_marginBottom">@dimen/md_keylines</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="VideoItem">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/md_keylines</item>
+    </style>
+
+    <style name="ReviewAuthor">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/primaryText</item>
+        <item name="android:layout_marginBottom">@dimen/md_keylines</item>
+    </style>
+
+    <style name="ReviewContent">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/secondaryText</item>
+        <item name="android:layout_marginBottom">@dimen/md_keylines</item>
+        <item name="android:maxLines">10</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="ReviewLink">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/secondaryText</item>
+        <item name="android:autoLink">web</item>
+    </style>
+
 </resources>

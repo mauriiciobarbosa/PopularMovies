@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
@@ -29,8 +30,10 @@ import com.squareup.picasso.Picasso;
 import com.udacity.mauricio.popularmovies.BuildConfig;
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.conn.ConnectionHandler;
+import com.udacity.mauricio.popularmovies.gui.adapter.ReviewAdapter;
 import com.udacity.mauricio.popularmovies.gui.adapter.VideoAdapter;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
+import com.udacity.mauricio.popularmovies.models.PageReviewDTO;
 import com.udacity.mauricio.popularmovies.models.VideoDTO;
 import com.udacity.mauricio.popularmovies.models.VideoResponseDTO;
 import com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask;
@@ -44,18 +47,20 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import static com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask.*;
 
 @EFragment(R.layout.frag_detail_movie)
-public class MovieDetailFragment extends Fragment implements View.OnClickListener {
+public class MovieDetailFragment extends Fragment implements View.OnClickListener, ConnectionHandler {
 
     private static final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
-    private static final int GET_VIDEOS_REQUEST_CODE = 1;
 
     @ViewById
     protected ImageView image, ivAdultMovie;
 
     @ViewById
-    protected TextView tvOriginalTitle, tvOverview, tvGender, tvReleaseDate, tvPopularity, tvMovies;
+    protected TextView tvOriginalTitle, tvOverview, tvGender, tvReleaseDate, tvPopularity, tvVideos, tvReviews;
 
     @ViewById
     protected RatingBar rbMovieStars;
@@ -72,6 +77,9 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
     @ViewById
     protected RecyclerView rvVideos;
 
+    @ViewById
+    protected RecyclerView rvReviews;
+
     @FragmentArg(DetailActivity.EXTRA_MOVIE)
     protected MovieDTO movie;
 
@@ -80,7 +88,7 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
 
     protected VideoAdapter videoAdapter;
 
-    private ConnectionHandler videoHandler;
+    protected ReviewAdapter reviewAdapter;
 
     private String language;
 
@@ -115,17 +123,32 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         rbMovieStars.setRating(Double.valueOf(movie.voteAverage).intValue() / 2);
         //tvGender.setText(movie.overview);
 
+        loadVideos();
+        loadReviews();
+    }
+
+    private void loadVideos() {
         videoAdapter = new VideoAdapter(getContext(), this);
         rvVideos.setAdapter(videoAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rvVideos.setLayoutManager(linearLayoutManager);
-
-        loadVideos();
+        task.setHandler(GET_VIDEOS_REQUEST_CODE, this);
+        task.getVideos(movie.id, new HashMap<String, String>() {{put(TheMovieDbTask.LANGUAGE_PARAM, language);}});
     }
 
-    private void loadVideos() {
-        task.setHandler(GET_VIDEOS_REQUEST_CODE, getVideoHandler());
-        task.getVideos(movie.id, new HashMap<String, String>() {{put(TheMovieDbTask.LANGUAGE_PARAM, language);}});
+    private void loadReviews() {
+        reviewAdapter = new ReviewAdapter(getContext());
+        rvReviews.setAdapter(reviewAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        rvReviews.setLayoutManager(linearLayoutManager);
+
+        Map<String, String> params = new HashMap<String, String>() {{
+            put(TheMovieDbTask.LANGUAGE_PARAM, language);
+            put(TheMovieDbTask.PAGE_PARAM, "1");
+        }};
+
+        task.setHandler(GET_REVIEWS_REQUEST_CODE, this);
+        task.getReviews(movie.id, params);
     }
 
     private void configureTransactionNames() {
@@ -141,15 +164,18 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
             final int toolbarColor = palette.getMutedColor(primaryColor);
             collapsingToolbar.setContentScrimColor(toolbarColor);
 
-            appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
-                @Override
-                public void onStateChanged(AppBarLayout appBarLayout, State state) {
-                    int statusBarColor = (state == AppBarStateChangeListener.State.COLLAPSED) ?
-                            AppUtils.getDarketColor(toolbarColor) : Color.TRANSPARENT;
-                    changeStatusBarColor(statusBarColor);
-                }
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
+                    @Override
+                    public void onStateChanged(AppBarLayout appBarLayout, State state) {
+                        int statusBarColor = (state == AppBarStateChangeListener.State.COLLAPSED) ?
+                                AppUtils.getDarketColor(toolbarColor) : Color.TRANSPARENT;
+                        changeStatusBarColor(statusBarColor);
+                    }
 
-            });
+                });
+            }
+
         }
     }
 
@@ -179,34 +205,36 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         startActivity(intent);
     }
 
-    private ConnectionHandler getVideoHandler() {
-        if (videoHandler == null) {
-            videoHandler = new ConnectionHandler() {
-                @Override
-                public void onPreExecute(int requestCode) {
+    @Override
+    public void onPreExecute(int requestCode) {
 
-                }
+    }
 
-                @Override
-                public void onConnectionSucess(int requestCode, Object result) {
-                    if (requestCode == GET_VIDEOS_REQUEST_CODE) {
-                        VideoResponseDTO videoResponse = (VideoResponseDTO) result;
+    @Override
+    public void onConnectionSucess(int requestCode, Object result) {
+        if (requestCode == GET_REVIEWS_REQUEST_CODE) {
+            PageReviewDTO pageReview = (PageReviewDTO) result;
 
-                        if (videoResponse == null || videoResponse.videos == null || videoResponse.videos.isEmpty())
-                            return;
+            if (pageReview == null || pageReview.reviews == null || pageReview.reviews.isEmpty())
+                return;
 
-                        videoAdapter.setItems(videoResponse.videos);
-                        tvMovies.setVisibility(View.VISIBLE);
-                        rvVideos.setVisibility(View.VISIBLE);
-                    }
-                }
+            reviewAdapter.setItems(pageReview.reviews);
+            tvReviews.setVisibility(View.VISIBLE);
+            rvReviews.setVisibility(View.VISIBLE);
+        } else if (requestCode == GET_VIDEOS_REQUEST_CODE) {
+            VideoResponseDTO videoResponse = (VideoResponseDTO) result;
 
-                @Override
-                public void onConnectionError(int requestCode, Exception e) {
-                    Log.e(LOG_TAG, "Error on getVideos: " + e.getMessage());
-                }
-            };
+            if (videoResponse == null || videoResponse.videos == null || videoResponse.videos.isEmpty())
+                return;
+
+            videoAdapter.setItems(videoResponse.videos);
+            tvVideos.setVisibility(View.VISIBLE);
+            rvVideos.setVisibility(View.VISIBLE);
         }
-        return videoHandler;
+    }
+
+    @Override
+    public void onConnectionError(int requestCode, Exception e) {
+        Log.e(LOG_TAG, e.getMessage());
     }
 }
