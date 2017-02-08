@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
@@ -42,28 +46,34 @@ import com.udacity.mauricio.popularmovies.utils.AppUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import static com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask.*;
+import static com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask.GET_REVIEWS_REQUEST_CODE;
+import static com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask.GET_VIDEOS_REQUEST_CODE;
 
 @EFragment(R.layout.frag_detail_movie)
-public class MovieDetailFragment extends Fragment implements View.OnClickListener, ConnectionHandler {
+public class MovieDetailFragment extends Fragment implements ConnectionHandler {
 
     private static final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
 
     @ViewById
-    protected ImageView image, ivAdultMovie;
+    protected ImageView image;
 
     @ViewById
     protected TextView tvOriginalTitle, tvOverview, tvGender, tvReleaseDate, tvPopularity, tvVideos, tvReviews;
 
     @ViewById
     protected RatingBar rbMovieStars;
+
+    @ViewById
+    protected FloatingActionButton fbFavorite;
 
     @ViewById
     protected Toolbar toolbar;
@@ -92,6 +102,8 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
 
     private String language;
 
+    private boolean isMarkedAsFavorite;
+
     @AfterViews
     protected void init() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -118,17 +130,20 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         tvOriginalTitle.setText(movie.originalTitle);
         tvOverview.setText(movie.overview);
         tvPopularity.setText(String.format("%.2f%%", movie.popularity));
-        ivAdultMovie.setVisibility(movie.adult ? View.VISIBLE : View.GONE);
         tvReleaseDate.setText(movie.releaseDate);
         rbMovieStars.setRating(Double.valueOf(movie.voteAverage).intValue() / 2);
         //tvGender.setText(movie.overview);
-
+        fbFavorite.setImageResource(isMarkedAsFavorite ? R.drawable.ic_favorite_filled : R.drawable.ic_favorite_empty);
         loadVideos();
         loadReviews();
     }
 
     private void loadVideos() {
-        videoAdapter = new VideoAdapter(getContext(), this);
+        videoAdapter = new VideoAdapter(getContext(), view -> {
+            int position = rvVideos.getChildLayoutPosition(view);
+            VideoDTO video = videoAdapter.getItems().get(position);
+            showVideo(video);
+        });
         rvVideos.setAdapter(videoAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rvVideos.setLayoutManager(linearLayoutManager);
@@ -186,16 +201,34 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         window.setStatusBarColor(statusBarColor);
     }
 
-    @Override
-    public void onClick(View view) {
+    @Click(R.id.fbFavorite)
+    public void onFavoriteButtonClick() {
+        isMarkedAsFavorite = !isMarkedAsFavorite;
 
-        switch (view.getId()) {
-            case R.id.item_video:
-                int position = rvVideos.getChildLayoutPosition(view);
-                VideoDTO video = videoAdapter.getItems().get(position);
-                showVideo(video);
-                break;
+        animateFab();
 
+        String message = getString(isMarkedAsFavorite ? R.string.msg_movie_marked_as_favorite : R.string.msg_movie_unmarked_as_favorite);
+        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void animateFab() {
+        Drawable source = ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite_empty);
+        Drawable target = ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite_filled);
+        Drawable backgrounds[] = new Drawable[2];
+        backgrounds[0] = source;
+        backgrounds[1] = target;
+
+        TransitionDrawable crossfader = new TransitionDrawable(backgrounds);
+
+        fbFavorite.setImageDrawable(crossfader);
+
+        int duration = (int) TimeUnit.SECONDS.toMillis(1);
+
+        if (isMarkedAsFavorite) {
+            crossfader.startTransition(duration);
+        } else {
+            crossfader.startTransition(0);
+            crossfader.reverseTransition(duration);
         }
     }
 
@@ -206,9 +239,7 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onPreExecute(int requestCode) {
-
-    }
+    public void onPreExecute(int requestCode) {}
 
     @Override
     public void onConnectionSucess(int requestCode, Object result) {

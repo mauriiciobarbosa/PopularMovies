@@ -144,19 +144,24 @@ public class TheMovieDbTask {
 
     @UiThread
     protected void onPreExecute(int requestCode) {
-        requests.get(requestCode).onPreExecute(requestCode);
+        if (requests.containsKey(requestCode))
+            requests.get(requestCode).onPreExecute(requestCode);
     }
 
     @UiThread
     protected void onConnectionSuccess(int requestCode, Object result) {
-        requests.get(requestCode).onConnectionSucess(requestCode, result);
-        requests.remove(requestCode);
+        if (requests.containsKey(requestCode)) {
+            requests.get(requestCode).onConnectionSucess(requestCode, result);
+            requests.remove(requestCode);
+        }
     }
 
     @UiThread
     protected void onConnectionError(int requestCode, Exception error) {
-        requests.get(requestCode).onConnectionError(requestCode, error);
-        requests.remove(requestCode);
+        if (requests.containsKey(requestCode)) {
+            requests.get(requestCode).onConnectionError(requestCode, error);
+            requests.remove(requestCode);
+        }
     }
 
 }

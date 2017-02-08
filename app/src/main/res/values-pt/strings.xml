@@ -2,6 +2,8 @@
 <resources>
     <string name="msg_error_on_load_images">Não foi possível carregar imagens</string>
     <string name="msg_has_no_more_data">Não há mais imagens disponíveis</string>
+    <string name="msg_movie_marked_as_favorite">Filme adicionado aos favoritos</string>
+    <string name="msg_movie_unmarked_as_favorite">Filme removido dos favoritos</string>
 
     <string name="label_original_title">Título Original</string>
     <string name="label_overview">Sipnose</string>
@@ -13,7 +15,7 @@
     <string name="label_videos">Videos</string>
     <string name="label_reviews">Comentários</string>
     <string name="label_by">Por</string>
-    <string name="label_see_more">Ver mais...</string>
+    <string name="label_see_more">Ver mais</string>
     <string name="action_refresh">Atualizar</string>
     <string name="action_settings">Configurações</string>
 

@@ -1,8 +1,15 @@
 package com.udacity.mauricio.popularmovies.gui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.URLSpan;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,10 +42,15 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     public void onBindViewHolder(ReviewViewHolder holder, int position) {
         ReviewDTO review = items.get(position);
         String author = context.getString(R.string.label_by) + " " + review.author;
-        String link = String.format("<a href=\"%s\">%s</a>", review.url, context.getString(R.string.label_see_more));
         holder.author.setText(author);
         holder.content.setText(review.content);
-        holder.link.setText(Html.fromHtml(link));
+        holder.link.setPaintFlags(holder.link.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        holder.link.setText(R.string.label_see_more);
+        holder.link.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(review.url));
+            context.startActivity(intent);
+        });
 
     }
 

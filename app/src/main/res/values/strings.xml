@@ -2,6 +2,8 @@
     <string name="app_name" translatable="false">RepoMovies</string>
     <string name="msg_error_on_load_images">Unable to load images</string>
     <string name="msg_has_no_more_data">Has no more data available</string>
+    <string name="msg_movie_marked_as_favorite">Movie added to favorites</string>
+    <string name="msg_movie_unmarked_as_favorite">Movie removed from favorites</string>
 
     <string name="label_original_title">Original Title</string>
     <string name="label_overview">Overview</string>
@@ -13,7 +15,7 @@
     <string name="label_videos">Videos</string>
     <string name="label_reviews">Reviews</string>
     <string name="label_by">By</string>
-    <string name="label_see_more">See more...</string>
+    <string name="label_see_more">See more</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_settings">Settings</string>
 

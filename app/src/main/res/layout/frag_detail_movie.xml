@@ -1,4 +1,5 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_content"
@@ -56,23 +57,10 @@
             android:paddingRight="@dimen/md_keylines"
             android:paddingTop="@dimen/md_keylines">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    style="@style/MovieDetailTitle"
-                    android:layout_width="wrap_content"
-                    android:text="@string/label_original_title" />
-
-                <ImageView
-                    android:id="@+id/ivAdultMovie"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@mipmap/ic_adult_movie"
-                    android:layout_alignParentRight="true" />
-
-            </RelativeLayout>
+            <TextView
+                style="@style/MovieDetailTitle"
+                android:layout_width="wrap_content"
+                android:text="@string/label_original_title" />
 
             <TextView
                 android:id="@+id/tvOriginalTitle"
@@ -166,5 +154,13 @@
 
     </android.support.v4.widget.NestedScrollView>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fbFavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/md_keylines"
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="bottom|end"
+        tools:src="@drawable/ic_favorite_filled" />
 
 </android.support.design.widget.CoordinatorLayout>
