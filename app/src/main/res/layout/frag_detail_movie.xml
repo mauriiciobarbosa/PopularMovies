@@ -55,7 +55,8 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/article_keylines"
             android:paddingRight="@dimen/md_keylines"
-            android:paddingTop="@dimen/md_keylines">
+            android:paddingTop="@dimen/md_keylines"
+            android:animateLayoutChanges="true">
 
             <TextView
                 style="@style/MovieDetailTitle"
