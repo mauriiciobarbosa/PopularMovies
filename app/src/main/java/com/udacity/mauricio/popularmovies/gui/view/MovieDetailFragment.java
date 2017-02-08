@@ -27,9 +27,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.udacity.mauricio.popularmovies.BuildConfig;
 import com.udacity.mauricio.popularmovies.R;
@@ -59,7 +61,7 @@ import static com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask.GET_REVIEW
 import static com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask.GET_VIDEOS_REQUEST_CODE;
 
 @EFragment(R.layout.frag_detail_movie)
-public class MovieDetailFragment extends Fragment implements ConnectionHandler {
+public class MovieDetailFragment extends Fragment implements ConnectionHandler, Callback {
 
     private static final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
 
@@ -67,7 +69,8 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler {
     protected ImageView image;
 
     @ViewById
-    protected TextView tvOriginalTitle, tvOverview, tvGender, tvReleaseDate, tvPopularity, tvVideos, tvReviews;
+    protected TextView tvOriginalTitle, tvOverview, tvGender, tvReleaseDate, tvPopularity, tvVideos,
+            tvReviews;
 
     @ViewById
     protected RatingBar rbMovieStars;
@@ -89,6 +92,9 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler {
 
     @ViewById
     protected RecyclerView rvReviews;
+
+    @ViewById
+    protected ProgressBar pbImage;
 
     @FragmentArg(DetailActivity.EXTRA_MOVIE)
     protected MovieDTO movie;
@@ -120,13 +126,13 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler {
             collapsingToolbar.setTitle(movie.title);
 
             configureTransactionNames();
-            configureToolbarColor();
+            //configureToolbarColor();
         }
 
     }
 
     private void fillMovieInfo(Context context, MovieDTO movie) {
-        Picasso.with(context).load(BuildConfig.BASE_URL_IMAGES + movie.posterPath).into(image);
+        Picasso.with(context).load(BuildConfig.BASE_URL_IMAGES + movie.posterPath).into(image, this);
         tvOriginalTitle.setText(movie.originalTitle);
         tvOverview.setText(movie.overview);
         tvPopularity.setText(String.format("%.2f%%", movie.popularity));
@@ -243,29 +249,43 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler {
 
     @Override
     public void onConnectionSucess(int requestCode, Object result) {
-        if (requestCode == GET_REVIEWS_REQUEST_CODE) {
-            PageReviewDTO pageReview = (PageReviewDTO) result;
+        if (isAdded()) {
+            if (requestCode == GET_REVIEWS_REQUEST_CODE) {
+                PageReviewDTO pageReview = (PageReviewDTO) result;
 
-            if (pageReview == null || pageReview.reviews == null || pageReview.reviews.isEmpty())
-                return;
+                if (pageReview == null || pageReview.reviews == null || pageReview.reviews.isEmpty())
+                    return;
 
-            reviewAdapter.setItems(pageReview.reviews);
-            tvReviews.setVisibility(View.VISIBLE);
-            rvReviews.setVisibility(View.VISIBLE);
-        } else if (requestCode == GET_VIDEOS_REQUEST_CODE) {
-            VideoResponseDTO videoResponse = (VideoResponseDTO) result;
+                reviewAdapter.setItems(pageReview.reviews);
+                tvReviews.setVisibility(View.VISIBLE);
+                rvReviews.setVisibility(View.VISIBLE);
+            } else if (requestCode == GET_VIDEOS_REQUEST_CODE) {
+                VideoResponseDTO videoResponse = (VideoResponseDTO) result;
 
-            if (videoResponse == null || videoResponse.videos == null || videoResponse.videos.isEmpty())
-                return;
+                if (videoResponse == null || videoResponse.videos == null || videoResponse.videos.isEmpty())
+                    return;
 
-            videoAdapter.setItems(videoResponse.videos);
-            tvVideos.setVisibility(View.VISIBLE);
-            rvVideos.setVisibility(View.VISIBLE);
+                videoAdapter.setItems(videoResponse.videos);
+                tvVideos.setVisibility(View.VISIBLE);
+                rvVideos.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     @Override
     public void onConnectionError(int requestCode, Exception e) {
         Log.e(LOG_TAG, e.getMessage());
+    }
+
+    @Override
+    public void onSuccess() {
+        configureToolbarColor();
+        pbImage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onError() {
+        image.setImageResource(R.drawable.ic_movie_error);
+        pbImage.setVisibility(View.GONE);
     }
 }

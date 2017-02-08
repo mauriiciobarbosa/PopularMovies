@@ -13,7 +13,15 @@
         <ImageView
             android:id="@+id/ivPoster"
             style="@style/PosterStyle"
-            tools:src="@drawable/example" />
+            tools:src="@drawable/ic_movie_error" />
+
+        <ProgressBar
+            android:id="@+id/pbImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@id/ivPoster"
+            android:layout_alignBottom="@id/ivPoster"/>
 
         <TextView
             android:id="@+id/tvTitle"

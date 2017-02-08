@@ -7,12 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.udacity.mauricio.popularmovies.BuildConfig;
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
+
+import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +46,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         MovieDTO movie = movies.get(position);
         String thumb = BuildConfig.BASE_URL_IMAGES + movie.posterPath;
-        Picasso.with(context).load(thumb).into(holder.poster);
+        holder.progress.setVisibility(View.VISIBLE);
+        Picasso.with(context).load(thumb).into(holder.poster, new Callback() {
+            @Override
+            public void onSuccess() {
+                holder.progress.setVisibility(View.GONE);
+            }
+            @Override
+            public void onError() {
+                holder.poster.setImageResource(R.drawable.ic_movie_error);
+                holder.progress.setVisibility(View.GONE);
+            }
+        });
         holder.title.setText(movie.title);
         holder.overview.setText(movie.overview);
     }
@@ -74,9 +89,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         ImageView poster;
         TextView title;
         TextView overview;
+        protected ProgressBar progress;
 
         MovieViewHolder(Context context, View itemView) {
             super(itemView);
+            progress = (ProgressBar) itemView.findViewById(R.id.pbImage);
             poster = (ImageView) itemView.findViewById(R.id.ivPoster);
             title = (TextView) itemView.findViewById(R.id.tvTitle);
             overview = (TextView) itemView.findViewById(R.id.tvDescription);
