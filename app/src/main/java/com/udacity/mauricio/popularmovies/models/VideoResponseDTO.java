@@ -12,10 +12,6 @@ import java.util.List;
 
 public class VideoResponseDTO implements Serializable {
 
-    @SerializedName("id")
-    @Expose
-    public int remoteId;
-
     @SerializedName("results")
     @Expose
     public List<VideoDTO> videos;

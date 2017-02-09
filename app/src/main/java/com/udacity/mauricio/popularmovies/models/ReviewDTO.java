@@ -11,10 +11,6 @@ import java.io.Serializable;
 
 public class ReviewDTO implements Serializable {
 
-    @SerializedName("id")
-    @Expose
-    public String remoteId;
-
     @Expose
     public String author;
 

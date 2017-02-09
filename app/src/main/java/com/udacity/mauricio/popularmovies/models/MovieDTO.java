@@ -10,9 +10,9 @@ import java.io.Serializable;
  */
 public class MovieDTO implements Serializable {
 
-    @SerializedName("id")
+    @SerializedName("remoteId")
     @Expose
-    public Integer id;
+    public Integer remoteId;
 
     @SerializedName("title")
     @Expose
@@ -41,9 +41,5 @@ public class MovieDTO implements Serializable {
     @SerializedName("vote_average")
     @Expose
     public Double voteAverage;
-
-    @SerializedName("adult")
-    @Expose
-    public Boolean adult;
 
 }

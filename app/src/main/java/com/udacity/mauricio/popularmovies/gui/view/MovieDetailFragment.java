@@ -154,7 +154,7 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rvVideos.setLayoutManager(linearLayoutManager);
         task.setHandler(GET_VIDEOS_REQUEST_CODE, this);
-        task.getVideos(movie.id, new HashMap<String, String>() {{put(TheMovieDbTask.LANGUAGE_PARAM, language);}});
+        task.getVideos(movie.remoteId, new HashMap<String, String>() {{put(TheMovieDbTask.LANGUAGE_PARAM, language);}});
     }
 
     private void loadReviews() {
@@ -169,7 +169,7 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
         }};
 
         task.setHandler(GET_REVIEWS_REQUEST_CODE, this);
-        task.getReviews(movie.id, params);
+        task.getReviews(movie.remoteId, params);
     }
 
     private void configureTransactionNames() {
