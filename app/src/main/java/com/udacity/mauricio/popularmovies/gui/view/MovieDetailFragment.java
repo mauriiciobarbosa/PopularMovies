@@ -36,10 +36,12 @@ import com.squareup.picasso.Picasso;
 import com.udacity.mauricio.popularmovies.BuildConfig;
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.conn.ConnectionHandler;
+import com.udacity.mauricio.popularmovies.data.MovieRepository;
 import com.udacity.mauricio.popularmovies.gui.adapter.ReviewAdapter;
 import com.udacity.mauricio.popularmovies.gui.adapter.VideoAdapter;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
 import com.udacity.mauricio.popularmovies.models.PageReviewDTO;
+import com.udacity.mauricio.popularmovies.models.ReviewDTO;
 import com.udacity.mauricio.popularmovies.models.VideoDTO;
 import com.udacity.mauricio.popularmovies.models.VideoResponseDTO;
 import com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask;
@@ -54,6 +56,7 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -102,13 +105,14 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
     @Bean
     protected TheMovieDbTask task;
 
+    @Bean
+    protected MovieRepository localRepository;
+
     protected VideoAdapter videoAdapter;
 
     protected ReviewAdapter reviewAdapter;
 
     private String language;
-
-    private boolean isMarkedAsFavorite;
 
     @AfterViews
     protected void init() {
@@ -126,7 +130,6 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
             collapsingToolbar.setTitle(movie.title);
 
             configureTransactionNames();
-            //configureToolbarColor();
         }
 
     }
@@ -139,7 +142,7 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
         tvReleaseDate.setText(movie.releaseDate);
         rbMovieStars.setRating(Double.valueOf(movie.voteAverage).intValue() / 2);
         //tvGender.setText(movie.overview);
-        fbFavorite.setImageResource(isMarkedAsFavorite ? R.drawable.ic_favorite_filled : R.drawable.ic_favorite_empty);
+        fbFavorite.setImageResource(movie.isFavorite ? R.drawable.ic_favorite_filled : R.drawable.ic_favorite_empty);
         loadVideos();
         loadReviews();
     }
@@ -153,8 +156,14 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
         rvVideos.setAdapter(videoAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rvVideos.setLayoutManager(linearLayoutManager);
-        task.setHandler(GET_VIDEOS_REQUEST_CODE, this);
-        task.getVideos(movie.remoteId, new HashMap<String, String>() {{put(TheMovieDbTask.LANGUAGE_PARAM, language);}});
+
+        if (movie.isFavorite && movie.videos.size() > 0) {
+            fillVideoAdapter(localRepository.getVideosFromMovie(movie));
+        } else {
+            task.setHandler(GET_VIDEOS_REQUEST_CODE, this);
+            task.getVideos(movie.remoteId, new HashMap<String, String>() {{put(TheMovieDbTask.LANGUAGE_PARAM, language);}});
+        }
+
     }
 
     private void loadReviews() {
@@ -168,8 +177,12 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
             put(TheMovieDbTask.PAGE_PARAM, "1");
         }};
 
-        task.setHandler(GET_REVIEWS_REQUEST_CODE, this);
-        task.getReviews(movie.remoteId, params);
+        if (movie.isFavorite && movie.reviews.size() > 0) {
+            fillReviewAdapter(localRepository.getReviewsFromMovie(movie));
+        } else {
+            task.setHandler(GET_REVIEWS_REQUEST_CODE, this);
+            task.getReviews(movie.remoteId, params);
+        }
     }
 
     private void configureTransactionNames() {
@@ -209,12 +222,31 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
 
     @Click(R.id.fbFavorite)
     public void onFavoriteButtonClick() {
-        isMarkedAsFavorite = !isMarkedAsFavorite;
+        movie.isFavorite = !movie.isFavorite;
+
+        if (movie.isFavorite)
+            saveMovie(movie);
+        else
+            removeMovie(movie);
 
         animateFab();
 
-        String message = getString(isMarkedAsFavorite ? R.string.msg_movie_marked_as_favorite : R.string.msg_movie_unmarked_as_favorite);
+        String message = getString(movie.isFavorite ? R.string.msg_movie_marked_as_favorite : R.string.msg_movie_unmarked_as_favorite);
         Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    protected void saveMovie(MovieDTO movie) {
+        if (videoAdapter.getItemCount() > 0)
+            movie.videos = videoAdapter.getItems();
+
+        if (reviewAdapter.getItemCount() > 0)
+            movie.reviews = reviewAdapter.getItems();
+
+        localRepository.saveMovie(movie);
+    }
+
+    protected void removeMovie(MovieDTO movie) {
+        localRepository.removeMovie(movie);
     }
 
     private void animateFab() {
@@ -230,7 +262,7 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
 
         int duration = (int) TimeUnit.SECONDS.toMillis(1);
 
-        if (isMarkedAsFavorite) {
+        if (movie.isFavorite) {
             crossfader.startTransition(duration);
         } else {
             crossfader.startTransition(0);
@@ -256,20 +288,28 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
                 if (pageReview == null || pageReview.reviews == null || pageReview.reviews.isEmpty())
                     return;
 
-                reviewAdapter.setItems(pageReview.reviews);
-                tvReviews.setVisibility(View.VISIBLE);
-                rvReviews.setVisibility(View.VISIBLE);
+                fillReviewAdapter(pageReview.reviews);
             } else if (requestCode == GET_VIDEOS_REQUEST_CODE) {
                 VideoResponseDTO videoResponse = (VideoResponseDTO) result;
 
                 if (videoResponse == null || videoResponse.videos == null || videoResponse.videos.isEmpty())
                     return;
 
-                videoAdapter.setItems(videoResponse.videos);
-                tvVideos.setVisibility(View.VISIBLE);
-                rvVideos.setVisibility(View.VISIBLE);
+                fillVideoAdapter(videoResponse.videos);
             }
         }
+    }
+
+    private void fillVideoAdapter(List<VideoDTO> videos) {
+        videoAdapter.setItems(videos);
+        tvVideos.setVisibility(View.VISIBLE);
+        rvVideos.setVisibility(View.VISIBLE);
+    }
+
+    private void fillReviewAdapter(List<ReviewDTO> reviews) {
+        reviewAdapter.setItems(reviews);
+        tvReviews.setVisibility(View.VISIBLE);
+        rvReviews.setVisibility(View.VISIBLE);
     }
 
     @Override

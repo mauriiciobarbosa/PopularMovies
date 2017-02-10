@@ -4,13 +4,14 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by mauricio-MTM on 12/6/2016.
  */
 public class MovieDTO implements Serializable {
 
-    @SerializedName("remoteId")
+    @SerializedName("id")
     @Expose
     public Integer remoteId;
 
@@ -41,5 +42,11 @@ public class MovieDTO implements Serializable {
     @SerializedName("vote_average")
     @Expose
     public Double voteAverage;
+
+    public List<ReviewDTO> reviews;
+
+    public List<VideoDTO> videos;
+
+    public boolean isFavorite;
 
 }

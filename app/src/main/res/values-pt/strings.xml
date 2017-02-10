@@ -21,6 +21,7 @@
 
     <string name="title_sort_by_popular">Mais Popular</string>
     <string name="title_sort_by_rated">Mais Votado</string>
+    <string name="title_sort_by_favorites">Favoritos</string>
     <string name="title_language_pt">Português</string>
     <string name="title_language_us">Inglês</string>
     <string name="title_sort">Ordenação</string>

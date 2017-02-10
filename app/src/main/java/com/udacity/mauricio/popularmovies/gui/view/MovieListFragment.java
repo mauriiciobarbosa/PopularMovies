@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.conn.ConnectionHandler;
+import com.udacity.mauricio.popularmovies.data.MovieRepository;
 import com.udacity.mauricio.popularmovies.gui.adapter.MovieAdapter;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
 import com.udacity.mauricio.popularmovies.models.PageDTO;
@@ -64,6 +65,10 @@ public class MovieListFragment extends Fragment
     @Bean
     protected TheMovieDbTask task;
 
+    @Bean
+    protected MovieRepository localRepository;
+
+
     // Store a member variable for the listener
     protected EndlessRecyclerViewScrollListener scrollListener;
     protected MovieAdapter adapter;
@@ -109,7 +114,10 @@ public class MovieListFragment extends Fragment
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                if (currentPage.totalPages > page) {
+                String sortByPref = AppUtils.getPreferenceValue(activity, getString(R.string.pref_sort_key),
+                        getString(R.string.pref_sort_default_value));
+
+                if (!sortByPref.equals(getString(R.string.sort_by_favorites)) && currentPage.totalPages > page) {
                     List<String> params = new ArrayList<>();
                     params.add(TheMovieDbTask.LANGUAGE_PARAM_POSITION, language);
                     params.add(TheMovieDbTask.SORT_PARAM_POSITION, sort);
@@ -147,7 +155,8 @@ public class MovieListFragment extends Fragment
     private boolean isSync() {
         String sortByPref = AppUtils.getPreferenceValue(activity, getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
         String languagePref = AppUtils.getPreferenceValue(activity, getString(R.string.pref_language_key), getString(R.string.pref_language_default_value));
-        return TextUtils.equals(sort, sortByPref) && TextUtils.equals(language, languagePref);
+        boolean isFavorites = sortByPref.equals(getString(R.string.sort_by_favorites));
+        return !isFavorites && TextUtils.equals(sort, sortByPref) && TextUtils.equals(language, languagePref);
     }
 
     @OptionsItem
@@ -169,12 +178,22 @@ public class MovieListFragment extends Fragment
         sort = AppUtils.getPreferenceValue(activity, getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
         language = AppUtils.getPreferenceValue(activity, getString(R.string.pref_language_key), getString(R.string.pref_language_default_value));
 
-        List<String> params = new ArrayList<>(TheMovieDbTask.PARAM_NUMBER);
-        params.add(TheMovieDbTask.LANGUAGE_PARAM_POSITION, language);
-        params.add(TheMovieDbTask.SORT_PARAM_POSITION, sort);
-        params.add(TheMovieDbTask.PAGE_PARAM_POSITION, "1");
+        if (sort.equals(getString(R.string.sort_by_favorites))) {
+            List<MovieDTO> movies = localRepository.getMovies();
+            if (movies.isEmpty())
+                showMessage();
+            else
+                adapter.setMovies(localRepository.getMovies());
+            swRefresh.setRefreshing(false);
+        } else {
+            List<String> params = new ArrayList<>(TheMovieDbTask.PARAM_NUMBER);
+            params.add(TheMovieDbTask.LANGUAGE_PARAM_POSITION, language);
+            params.add(TheMovieDbTask.SORT_PARAM_POSITION, sort);
+            params.add(TheMovieDbTask.PAGE_PARAM_POSITION, "1");
 
-        loadMovies(params.toArray(new String[TheMovieDbTask.PARAM_NUMBER]));
+            loadMovies(params.toArray(new String[TheMovieDbTask.PARAM_NUMBER]));
+        }
+
     }
 
     public void loadMovies(String... params) {
@@ -191,6 +210,8 @@ public class MovieListFragment extends Fragment
     public void onClick(View view) {
         int position = rvMovies.getChildLayoutPosition(view);
         MovieDTO movie = adapter.getMovies().get(position);
+
+        movie.isFavorite = localRepository.hasMovie(movie);
 
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
                 Pair.create(view.findViewById(R.id.ivPoster), getString(R.string.movie_poster_trasition_name)),

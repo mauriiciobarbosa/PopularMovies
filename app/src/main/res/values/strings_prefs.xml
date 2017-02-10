@@ -2,6 +2,7 @@
 <resources>
     <string name="sort_by_popular_value" translatable="false">popularity.desc</string>
     <string name="sort_by_rated_value" translatable="false">vote_average.desc</string>
+    <string name="sort_by_favorites" translatable="false">favorites</string>
 
     <string name="pref_sort_key" translatable="false">pref_sort_key</string>
     <string name="pref_sort_title" >@string/title_sort</string>
@@ -10,11 +11,13 @@
     <string-array name="sort_by_list">
         <item>@string/title_sort_by_popular</item>
         <item>@string/title_sort_by_rated</item>
+        <item>@string/title_sort_by_favorites</item>
     </string-array>
 
     <string-array name="sort_by_list_values">
         <item>@string/sort_by_popular_value</item>
         <item>@string/sort_by_rated_value</item>
+        <item>@string/sort_by_favorites</item>
     </string-array>
 
     <string name="language_pt_value" translatable="false">pt-BR</string>

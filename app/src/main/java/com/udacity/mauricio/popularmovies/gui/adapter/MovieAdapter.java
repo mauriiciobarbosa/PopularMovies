@@ -16,8 +16,6 @@ import com.udacity.mauricio.popularmovies.BuildConfig;
 import com.udacity.mauricio.popularmovies.R;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
 
-import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,20 +44,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         MovieDTO movie = movies.get(position);
         String thumb = BuildConfig.BASE_URL_IMAGES + movie.posterPath;
-        holder.progress.setVisibility(View.VISIBLE);
+        changeProgressBarVisibility(holder.progress, View.VISIBLE);
         Picasso.with(context).load(thumb).into(holder.poster, new Callback() {
             @Override
             public void onSuccess() {
-                holder.progress.setVisibility(View.GONE);
+                changeProgressBarVisibility(holder.progress, View.GONE);
             }
             @Override
             public void onError() {
                 holder.poster.setImageResource(R.drawable.ic_movie_error);
-                holder.progress.setVisibility(View.GONE);
+                changeProgressBarVisibility(holder.progress, View.GONE);
             }
         });
         holder.title.setText(movie.title);
         holder.overview.setText(movie.overview);
+    }
+
+    public void changeProgressBarVisibility(ProgressBar progress, int visibility) {
+        if (progress != null) progress.setVisibility(visibility);
     }
 
     @Override

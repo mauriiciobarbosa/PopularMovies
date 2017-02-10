@@ -26,30 +26,33 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         final StringBuilder SQL_CREATE_TABLE_MOVIE = new StringBuilder()
                 .append("CREATE TABLE " + MovieEntry.TABLE_NAME + " (")
                 .append(MovieEntry._ID + " INTEGER PRIMARY KEY, ")
-                .append(MovieEntry.SERVER_ID + " INTEGER NOT NULL, ")
                 .append(MovieEntry.COLUMN_TITLE + " TEXT NOT NULL, ")
+                .append(MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, ")
                 .append(MovieEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, ")
                 .append(MovieEntry.COLUMN_POPULARITY + " REAL NOT NULL, ")
                 .append(MovieEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, ")
                 .append(MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, ")
+                .append(MovieEntry.COLUMN_IS_FAVORITE + " INTEGER NOT NULL, ")
                 .append(MovieEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL); ");
 
         final StringBuilder SQL_CREATE_TABLE_VIDEO = new StringBuilder()
                 .append("CREATE TABLE " + VideoEntry.TABLE_NAME + " (")
-                .append(VideoEntry._ID + " INTEGER PRIMARY KEY, ")
+                .append(VideoEntry._ID + " TEXT PRIMARY KEY, ")
+                .append(VideoEntry.COLUMN_MOVIE_KEY + " INTEGER NOT NULL, ")
                 .append(VideoEntry.COLUMN_KEY + " TEXT NOT NULL, ")
                 .append(VideoEntry.COLUMN_NAME + " TEXT NOT NULL, ")
                 .append("FOREIGN KEY (" + VideoEntry.COLUMN_MOVIE_KEY + ") ")
-                .append("REFERENCES " + MovieEntry.TABLE_NAME + "( " + MovieEntry._ID + ");");
+                .append("REFERENCES " + MovieEntry.TABLE_NAME + "( " + MovieEntry._ID + "));");
 
         final StringBuilder SQL_CREATE_TABLE_REVIEW = new StringBuilder()
                 .append("CREATE TABLE " + ReviewEntry.TABLE_NAME + " (")
-                .append(ReviewEntry._ID + " INTEGER PRIMARY KEY, ")
+                .append(ReviewEntry._ID + " TEXT PRIMARY KEY, ")
+                .append(ReviewEntry.COLUMN_MOVIE_KEY + " INTEGER NOT NULL, ")
                 .append(ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, ")
                 .append(ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, ")
                 .append(ReviewEntry.COLUMN_URL + " TEXT NOT NULL, ")
                 .append("FOREIGN KEY (" + ReviewEntry.COLUMN_MOVIE_KEY + ") ")
-                .append("REFERENCES " + MovieEntry.TABLE_NAME + "( " + MovieEntry._ID + ");");
+                .append("REFERENCES " + MovieEntry.TABLE_NAME + "( " + MovieEntry._ID + "));");
 
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_MOVIE.toString());
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_VIDEO.toString());
@@ -62,4 +65,5 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + VideoEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);
     }
+
 }
