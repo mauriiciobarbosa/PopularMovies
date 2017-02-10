@@ -157,7 +157,7 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rvVideos.setLayoutManager(linearLayoutManager);
 
-        if (movie.isFavorite && movie.videos.size() > 0) {
+        if (movie.isFavorite) {
             fillVideoAdapter(localRepository.getVideosFromMovie(movie));
         } else {
             task.setHandler(GET_VIDEOS_REQUEST_CODE, this);
@@ -177,7 +177,7 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
             put(TheMovieDbTask.PAGE_PARAM, "1");
         }};
 
-        if (movie.isFavorite && movie.reviews.size() > 0) {
+        if (movie.isFavorite) {
             fillReviewAdapter(localRepository.getReviewsFromMovie(movie));
         } else {
             task.setHandler(GET_REVIEWS_REQUEST_CODE, this);
@@ -285,15 +285,13 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
             if (requestCode == GET_REVIEWS_REQUEST_CODE) {
                 PageReviewDTO pageReview = (PageReviewDTO) result;
 
-                if (pageReview == null || pageReview.reviews == null || pageReview.reviews.isEmpty())
-                    return;
+                if (pageReview == null) return;
 
                 fillReviewAdapter(pageReview.reviews);
             } else if (requestCode == GET_VIDEOS_REQUEST_CODE) {
                 VideoResponseDTO videoResponse = (VideoResponseDTO) result;
 
-                if (videoResponse == null || videoResponse.videos == null || videoResponse.videos.isEmpty())
-                    return;
+                if (videoResponse == null) return;
 
                 fillVideoAdapter(videoResponse.videos);
             }
@@ -301,12 +299,16 @@ public class MovieDetailFragment extends Fragment implements ConnectionHandler, 
     }
 
     private void fillVideoAdapter(List<VideoDTO> videos) {
+        if (videos == null || videos.isEmpty()) return;
+
         videoAdapter.setItems(videos);
         tvVideos.setVisibility(View.VISIBLE);
         rvVideos.setVisibility(View.VISIBLE);
     }
 
     private void fillReviewAdapter(List<ReviewDTO> reviews) {
+        if (reviews == null || reviews.isEmpty()) return;
+
         reviewAdapter.setItems(reviews);
         tvReviews.setVisibility(View.VISIBLE);
         rvReviews.setVisibility(View.VISIBLE);

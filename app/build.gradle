@@ -29,7 +29,7 @@ android {
     }
     buildTypes.each {
         it.buildConfigField 'String', 'BASE_URL', '"https://api.themoviedb.org/3/"'
-        it.buildConfigField 'String', 'API_KEY', '"781f5b39ef7222ceb862dcde957ec3f4"'
+        it.buildConfigField 'String', 'API_KEY', '"THE_MOVIE_DB_API_KEY"'
         it.buildConfigField 'String', 'BASE_URL_IMAGES', '"http://image.tmdb.org/t/p/w780"'
         it.buildConfigField 'String', 'YOUTUBE_URL', '"http://www.youtube.com/watch?v=#{KEY}"'
         it.buildConfigField 'String', 'YOUTUBE_URL_IMAGES', '"https://img.youtube.com/vi/#{KEY}/default.jpg"'

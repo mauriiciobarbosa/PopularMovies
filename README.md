@@ -6,7 +6,7 @@ RepoMovies project is an android app to allow users to discover the most popular
 
 ## Installation
 
-To use this app please obtain an API Key from TMDB and place it within "api_key" in the app Strings.xml file.
+To use this app please obtain an API Key from TMDB and replace "API_KEY" build config field in the app gradle file.
 
 ##Screenshots
 
@@ -16,4 +16,4 @@ To use this app please obtain an API Key from TMDB and place it within "api_key"
 
 <br><img src="/screenshots/ColapsedDetailScreen.png" width="480" height="820">
 
-<br><img src="/screenshots/PreferenceScreen.png" width="480" height="820">
+<br><img src="/screenshots/Tablet.png">
