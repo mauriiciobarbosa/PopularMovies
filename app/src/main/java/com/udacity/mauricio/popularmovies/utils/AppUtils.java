@@ -12,6 +12,8 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.udacity.mauricio.popularmovies.data.MovieContract;
 import com.udacity.mauricio.popularmovies.models.MovieDTO;
 import com.udacity.mauricio.popularmovies.models.ReviewDTO;
@@ -67,6 +69,31 @@ public final class AppUtils {
         movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.posterPath);
         movieValues.put(MovieContract.MovieEntry.COLUMN_IS_FAVORITE, movie.isFavorite);
         return movieValues;
+    }
+
+    public static ContentValues[] getVideoValues(List<VideoDTO> videos, long parentId) {
+        return Stream.of(videos)
+                .map(v -> {
+                    ContentValues videoValues = new ContentValues();
+                    videoValues.put(MovieContract.VideoEntry._ID, v.remoteId);
+                    videoValues.put(MovieContract.VideoEntry.COLUMN_MOVIE_KEY, parentId);
+                    videoValues.put(MovieContract.VideoEntry.COLUMN_KEY, v.key);
+                    videoValues.put(MovieContract.VideoEntry.COLUMN_NAME, v.name);
+                    return videoValues;
+                }).collect(Collectors.toList()).toArray(new ContentValues[videos.size()]);
+    }
+
+    public static ContentValues[] getReviewValues(List<ReviewDTO> reviews, long parentId) {
+        return Stream.of(reviews)
+                .map(v -> {
+                    ContentValues reviewValues = new ContentValues();
+                    reviewValues.put(MovieContract.ReviewEntry._ID, v.remoteId);
+                    reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOVIE_KEY, parentId);
+                    reviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, v.author);
+                    reviewValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT, v.content);
+                    reviewValues.put(MovieContract.ReviewEntry.COLUMN_URL, v.url);
+                    return reviewValues;
+                }).collect(Collectors.toList()).toArray(new ContentValues[reviews.size()]);
     }
 
     public static List<MovieDTO> getMoviesFromCursor(Cursor cursor) {
