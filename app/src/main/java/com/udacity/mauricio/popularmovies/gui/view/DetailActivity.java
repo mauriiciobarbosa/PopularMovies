@@ -26,7 +26,7 @@ public class DetailActivity extends BaseActivity {
         MovieDetailFragment fragment = new MovieDetailFragment_();
         fragment.setArguments(args);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, fragment)
+                .replace(R.id.container, fragment)
                 .commit();
     }
 

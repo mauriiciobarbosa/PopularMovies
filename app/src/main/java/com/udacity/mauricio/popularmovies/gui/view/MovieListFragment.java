@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +45,8 @@ import static com.udacity.mauricio.popularmovies.tasks.TheMovieDbTask.GET_MOVIES
 public class MovieListFragment extends Fragment
     implements View.OnClickListener,
         SwipeRefreshLayout.OnRefreshListener {
+
+    private static final int COLUMNS_NUMBER = 2;
 
     private static final String LOG_TAG = MovieListFragment.class.getSimpleName();
 
@@ -101,15 +104,15 @@ public class MovieListFragment extends Fragment
         adapter = new MovieAdapter(getContext(), this);
 
         rvMovies.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        rvMovies.setLayoutManager(linearLayoutManager);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), COLUMNS_NUMBER);
+        rvMovies.setLayoutManager(layoutManager);
 
         if (isLand)
             rvMovies.addItemDecoration(new DividerItemDecoration(getContext(),
-                    linearLayoutManager.getOrientation()));
+                    layoutManager.getOrientation()));
 
         // Retain an instance so that you can call `resetState()` for fresh searches
-        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
@@ -136,11 +139,6 @@ public class MovieListFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-
-        if (!AppUtils.hasInternetConnection(getContext()) && adapter.getItemCount() == 0) {
-            showMessage();
-            return;
-        }
 
         if (!isSync()) {
             String languagePref = AppUtils.getPreferenceValue(activity, getString(R.string.pref_language_key), getString(R.string.pref_language_default_value));
@@ -182,8 +180,11 @@ public class MovieListFragment extends Fragment
             List<MovieDTO> movies = localRepository.getMovies();
             if (movies.isEmpty())
                 showMessage();
-            else
-                adapter.setMovies(localRepository.getMovies());
+            else {
+                adapter.setMovies(movies);
+                rvMovies.setVisibility(View.VISIBLE);
+                tvMessage.setVisibility(View.GONE);
+            }
             swRefresh.setRefreshing(false);
         } else {
             List<String> params = new ArrayList<>(TheMovieDbTask.PARAM_NUMBER);
@@ -214,8 +215,8 @@ public class MovieListFragment extends Fragment
         movie.isFavorite = localRepository.hasMovie(movie);
 
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
-                Pair.create(view.findViewById(R.id.ivPoster), getString(R.string.movie_poster_trasition_name)),
-                Pair.create(view.findViewById(R.id.tvDescription), getString(R.string.movie_overview_trasition_name)));
+                Pair.create(view.findViewById(R.id.ivPoster), getString(R.string.movie_poster_trasition_name)));
+//                ,Pair.create(view.findViewById(R.id.tvDescription), getString(R.string.movie_overview_trasition_name)));
 
         listener.onItemSelected(movie, options);
     }
@@ -248,11 +249,15 @@ public class MovieListFragment extends Fragment
 
                     currentPage = page;
                     adapter.setMovies(currentPage.movies);
+                    rvMovies.setVisibility(View.VISIBLE);
+                    tvMessage.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onConnectionError(int requestCode, Exception e) {
                     Log.e(LOG_TAG, "Error on getMovies: " + e.getMessage());
+                    swRefresh.setRefreshing(false);
+                    showMessage();
                 }
             };
         }

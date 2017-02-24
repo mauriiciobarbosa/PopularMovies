@@ -35,7 +35,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movie, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movie_2, parent, false);
         view.setOnClickListener(listener);
         return new MovieViewHolder(context, view);
     }
@@ -57,11 +57,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             }
         });
         holder.title.setText(movie.title);
-        holder.overview.setText(movie.overview);
+        //holder.overview.setText(movie.overview);
     }
 
     public void changeProgressBarVisibility(ProgressBar progress, int visibility) {
-        if (progress != null) progress.setVisibility(visibility);
+        //if (progress != null) progress.setVisibility(visibility);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             title = (TextView) itemView.findViewById(R.id.tvTitle);
             overview = (TextView) itemView.findViewById(R.id.tvDescription);
             ViewCompat.setTransitionName(poster, context.getString(R.string.movie_poster_trasition_name));
-            ViewCompat.setTransitionName(overview, context.getString(R.string.movie_overview_trasition_name));
+//            ViewCompat.setTransitionName(overview, context.getString(R.string.movie_overview_trasition_name));
         }
     }
 
